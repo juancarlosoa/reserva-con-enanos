@@ -1,6 +1,0 @@
-@ReservaConEnanos_HostAddress = http://localhost:5103
-
-GET {{ReservaConEnanos_HostAddress}}/ReservationController/
-Accept: application/json
-
-###

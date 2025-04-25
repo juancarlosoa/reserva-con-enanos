@@ -1,0 +1,6 @@
+@ReservaConEnanos.Reservations_HostAddress = http://localhost:5167
+
+GET {{ReservaConEnanos.Reservations_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
