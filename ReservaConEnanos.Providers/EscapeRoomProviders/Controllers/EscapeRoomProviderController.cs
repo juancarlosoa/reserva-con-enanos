@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReservaConEnanos.Providers.EscapeRoomProviders.DTOs;
 using ReservaConEnanos.Providers.EscapeRoomProviders.Services;
@@ -34,14 +33,14 @@ namespace ReservaConEnanos.Providers.EscapeRoomProviders.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<EscapeRoomProviderResponseDTO>> CreateProvider([FromBody] EscapeRoomProviderRequestDTO dto)
+        public async Task<ActionResult<EscapeRoomProviderResponseDTO>> CreateProvider([FromBody] EscapeRoomProviderCreateDTO dto)
         {
             var created = await _providerService.CreateProviderAsync(dto);
-            return CreatedAtAction(nameof(GetProviderById), new { id = created.Id }, created);
+            return CreatedAtAction(nameof(GetProviderById), new { providerId = created.Id }, created);
         }
 
         [HttpPut]
-        public async Task<ActionResult<EscapeRoomProviderResponseDTO>> UpdateProvider([FromBody] EscapeRoomProviderRequestDTO dto)
+        public async Task<ActionResult<EscapeRoomProviderResponseDTO>> UpdateProvider([FromBody] EscapeRoomProviderUpdateDTO dto)
         {
             var updated = await _providerService.UpdateProviderAsync(dto);
             return Ok(updated);

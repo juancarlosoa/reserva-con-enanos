@@ -7,7 +7,8 @@ namespace ReservaConEnanos.Providers.EscapeRoomProviders.Mappings;
 public class EscapeRoomProviderProfile : Profile
 {
     public EscapeRoomProviderProfile() {
-        CreateMap<EscapeRoomProviderRequestDTO, EscapeRoomProvider>();
+        CreateMap<EscapeRoomProviderCreateDTO, EscapeRoomProvider>();
         CreateMap<EscapeRoomProvider, EscapeRoomProviderResponseDTO>();
+        CreateMap<EscapeRoomProviderUpdateDTO, EscapeRoomProvider>();
     }
 }

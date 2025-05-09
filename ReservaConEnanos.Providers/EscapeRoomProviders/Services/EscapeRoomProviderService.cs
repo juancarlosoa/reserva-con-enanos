@@ -17,7 +17,7 @@ public class EscapeRoomProviderService : IEscapeRoomProviderService
         _mapper = mapper;
     }
 
-    public async Task<EscapeRoomProviderResponseDTO> CreateProviderAsync(EscapeRoomProviderRequestDTO dto)
+    public async Task<EscapeRoomProviderResponseDTO> CreateProviderAsync(EscapeRoomProviderCreateDTO dto)
     {
         var provider = _mapper.Map<EscapeRoomProvider>(dto);
         await _repository.AddAsync(provider);
@@ -51,7 +51,7 @@ public class EscapeRoomProviderService : IEscapeRoomProviderService
         return _mapper.Map<IEnumerable<RoomResponseDTO>>(rooms);
     }
 
-    public async Task<EscapeRoomProviderResponseDTO> UpdateProviderAsync(EscapeRoomProviderRequestDTO dto)
+    public async Task<EscapeRoomProviderResponseDTO> UpdateProviderAsync(EscapeRoomProviderUpdateDTO dto)
     {
         var provider = _mapper.Map<EscapeRoomProvider>(dto);
         await _repository.UpdateAsync(provider);

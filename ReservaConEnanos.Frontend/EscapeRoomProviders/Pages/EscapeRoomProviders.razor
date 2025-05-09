@@ -1,0 +1,79 @@
+﻿@page "/providers"
+
+@using ReservaConEnanos.Frontend.EscapeRoomProviders.DTOs
+@using ReservaConEnanos.Frontend.EscapeRoomProviders.ApiClients
+@using MudBlazor
+@inject IEscapeRoomProviderApiClient ProviderApiClient
+
+
+<MudDataGrid T="EscapeRoomProviderResponseDTO" Items="@providers" ReadOnly="false" EditMode="DataGridEditMode.Form"
+    StartedEditingItem="@StartedEditingItem" CanceledEditingItem="@CanceledEditingItem" CommittedItemChanges="@CommitedItemChanges"
+    Bordered="false" Dense="false" EditTrigger="DataGridEditTrigger.Manual">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Title="Name" />
+        <PropertyColumn Property="x => x.Email" Title="Email" />
+        <PropertyColumn Property="x => x.PhoneNumber" Title="Phone Number" />
+        <PropertyColumn Property="x => x.CreatedAt" Title="Fecha Creación" />
+        <TemplateColumn CellClass="d-flex justify-end">
+            <CellTemplate>
+                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn>
+            <CellTemplate>
+                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.DeleteOutline" />
+            </CellTemplate> 
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+@code 
+{
+    private List<EscapeRoomProviderResponseDTO>? providers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProviders();
+    }
+
+    private async Task LoadProviders()
+    {
+        providers = (await ProviderApiClient.GetAllProvidersAsync())?.ToList();
+    }
+
+    private async Task DeleteProvider(Guid id)
+    {
+        var success = await ProviderApiClient.DeleteProviderAsync(id);
+        if (success)
+        {
+            await LoadProviders();
+        }
+    }
+
+    private async Task UpdateProvider(EscapeRoomProviderResponseDTO provider) 
+    {
+        var requestDto = new EscapeRoomProviderUpdateDTO();
+        requestDto.Id = provider.Id;
+        requestDto.Name = provider.Name;
+        requestDto.Email = provider.Email;
+        requestDto.PhoneNumber = provider.PhoneNumber;
+
+        var dto = await ProviderApiClient.UpdateProviderAsync(requestDto);
+    }
+
+    // events 
+    void StartedEditingItem(EscapeRoomProviderResponseDTO item)
+    {
+
+    }
+
+    void CanceledEditingItem(EscapeRoomProviderResponseDTO item)
+    {
+
+    }
+
+    async void CommitedItemChanges(EscapeRoomProviderResponseDTO item)
+    {
+        await UpdateProvider(item);
+    }
+}

@@ -1,4 +1,3 @@
-using System;
 using ReservaConEnanos.Providers.EscapeRoomProviders.DTOs;
 using ReservaConEnanos.Providers.Rooms.DTOs;
 
@@ -8,8 +7,8 @@ public interface IEscapeRoomProviderService
 {
     Task<IEnumerable<EscapeRoomProviderResponseDTO>> GetAllProviders();
     Task<EscapeRoomProviderResponseDTO?> GetProviderByIdAsync(Guid providerId);
-    Task<EscapeRoomProviderResponseDTO> CreateProviderAsync(EscapeRoomProviderRequestDTO dto);
-    Task<EscapeRoomProviderResponseDTO> UpdateProviderAsync(EscapeRoomProviderRequestDTO dto);
+    Task<EscapeRoomProviderResponseDTO> CreateProviderAsync(EscapeRoomProviderCreateDTO dto);
+    Task<EscapeRoomProviderResponseDTO> UpdateProviderAsync(EscapeRoomProviderUpdateDTO dto);
     Task<bool> DeleteProvider(Guid providerId);
     Task<IEnumerable<RoomResponseDTO>> GetRoomsByProviderIdAsync(Guid providerId);
 }
