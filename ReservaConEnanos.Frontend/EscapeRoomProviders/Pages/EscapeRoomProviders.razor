@@ -1,35 +1,42 @@
 ﻿@page "/providers"
 
-@using ReservaConEnanos.Frontend.EscapeRoomProviders.DTOs
-@using ReservaConEnanos.Frontend.EscapeRoomProviders.ApiClients
-@using MudBlazor
-@inject IEscapeRoomProviderApiClient ProviderApiClient
+@using ReservaConEnanos.Frontend.EscapeRoomProviders.Entities
+@using ReservaConEnanos.Frontend.EscapeRoomProviders.Services
+@using ReservaConEnanos.Frontend.EscapeRoomProviders.Components
 
+@inject IEscapeRoomProviderService ProviderService
+@inject NavigationManager Nav
 
-<MudDataGrid T="EscapeRoomProviderResponseDTO" Items="@providers" ReadOnly="false" EditMode="DataGridEditMode.Form"
-    StartedEditingItem="@StartedEditingItem" CanceledEditingItem="@CanceledEditingItem" CommittedItemChanges="@CommitedItemChanges"
-    Bordered="false" Dense="false" EditTrigger="DataGridEditTrigger.Manual">
-    <Columns>
-        <PropertyColumn Property="x => x.Name" Title="Name" />
-        <PropertyColumn Property="x => x.Email" Title="Email" />
-        <PropertyColumn Property="x => x.PhoneNumber" Title="Phone Number" />
-        <PropertyColumn Property="x => x.CreatedAt" Title="Fecha Creación" />
-        <TemplateColumn CellClass="d-flex justify-end">
-            <CellTemplate>
-                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
-            </CellTemplate>
-        </TemplateColumn>
-        <TemplateColumn>
-            <CellTemplate>
-                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.DeleteOutline" />
-            </CellTemplate> 
-        </TemplateColumn>
-    </Columns>
-</MudDataGrid>
+<MudContainer>
+    <MudText Typo="Typo.h4" Class="my-4">Salas de Escape</MudText>
+@if (isLoading)
+{
+    <MudGrid>
+        @for (int i = 0; i < 4; i++)
+        {
+            <MudItem xs="12" sm="6" md="4" lg="3">
+                <MudSkeleton Height="300px" Width="100%" />
+            </MudItem>
+        }
+    </MudGrid>
+} else {
+    <MudGrid>
+        @foreach (var provider in providers)
+        {
+            <MudItem xs="12" sm="6" md="4" lg="3">
+                <EscapeRoomProviderCard Provider="provider" />
+            </MudItem>
+        }
+    </MudGrid>
+}
+</MudContainer>
 
 @code 
 {
-    private List<EscapeRoomProviderResponseDTO>? providers;
+    private List<EscapeRoomProvider> providers = [];
+    private int currentPage = 0;
+    private const int pageSize = 12;
+    private bool isLoading = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -38,42 +45,20 @@
 
     private async Task LoadProviders()
     {
-        providers = (await ProviderApiClient.GetAllProvidersAsync())?.ToList();
-    }
+        if (isLoading) return;
 
-    private async Task DeleteProvider(Guid id)
-    {
-        var success = await ProviderApiClient.DeleteProviderAsync(id);
-        if (success)
-        {
-            await LoadProviders();
+        isLoading = true;
+        var newProviders =  (await ProviderService.GetAllProvidersAsync())?.ToList();
+
+        if (newProviders is not null) {
+            providers?.AddRange(newProviders);
+            currentPage++;
         }
+        isLoading = false;
     }
 
-    private async Task UpdateProvider(EscapeRoomProviderResponseDTO provider) 
+    void NavigateToDetails(Guid providerId)
     {
-        var requestDto = new EscapeRoomProviderUpdateDTO();
-        requestDto.Id = provider.Id;
-        requestDto.Name = provider.Name;
-        requestDto.Email = provider.Email;
-        requestDto.PhoneNumber = provider.PhoneNumber;
-
-        var dto = await ProviderApiClient.UpdateProviderAsync(requestDto);
-    }
-
-    // events 
-    void StartedEditingItem(EscapeRoomProviderResponseDTO item)
-    {
-
-    }
-
-    void CanceledEditingItem(EscapeRoomProviderResponseDTO item)
-    {
-
-    }
-
-    async void CommitedItemChanges(EscapeRoomProviderResponseDTO item)
-    {
-        await UpdateProvider(item);
+        Nav.NavigateTo($"/providers/{providerId}");
     }
 }

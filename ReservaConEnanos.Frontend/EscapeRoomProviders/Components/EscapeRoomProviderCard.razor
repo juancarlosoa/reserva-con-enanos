@@ -1,0 +1,17 @@
+﻿@using ReservaConEnanos.Frontend.EscapeRoomProviders.Entities
+
+<MudCard Class="max-w-sm m-2 cursor-pointer" @onclick="@OnClick">
+    <MudCardMedia Image="@Provider.ImageUrl" Height="180" />
+    <MudCardContent>
+        <MudText Typo="Typo.h6">@Provider.Name</MudText>
+        <MudText Typo="Typo.subtitle2">@Provider.City</MudText>
+        <MudText Typo="Typo.body2">@Provider.PhoneNumber</MudText>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter] public required EscapeRoomProvider Provider { get; set; }
+    [Parameter] public EventCallback<Guid?> OnProviderSelected { get; set; }
+
+    private async Task OnClick() => await OnProviderSelected.InvokeAsync(Provider.Id);
+}

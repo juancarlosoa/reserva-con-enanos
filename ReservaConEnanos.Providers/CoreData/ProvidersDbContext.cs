@@ -16,6 +16,11 @@ public class ProvidersDbContext: DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<EscapeRoomProvider>()
+            .HasKey(p => p.Id);
+        modelBuilder.Entity<Room>()
+            .HasKey(r => r.Id);
+
+        modelBuilder.Entity<EscapeRoomProvider>()
             .HasMany(p => p.Rooms)
             .WithOne(r => r.Provider)
             .HasForeignKey(r => r.ProviderId)
