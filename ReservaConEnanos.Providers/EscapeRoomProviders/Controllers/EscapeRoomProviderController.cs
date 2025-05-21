@@ -22,7 +22,7 @@ namespace ReservaConEnanos.Providers.EscapeRoomProviders.Controllers
             var providers = await _providerService.GetAllProviders();
             return Ok(providers);
         }
-
+        
         [HttpGet("{providerId}")]
         public async Task<ActionResult<EscapeRoomProviderResponseDTO>> GetProviderById(Guid providerId)
         {
