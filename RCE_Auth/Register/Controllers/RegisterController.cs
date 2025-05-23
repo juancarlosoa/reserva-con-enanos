@@ -30,7 +30,7 @@ namespace RCE_Auth.Register.Controllers
                 return BadRequest(new { error = result.Message });
             }
 
-            return Ok(new { message = "User registered successfully" });
+            return Ok(new { message = "Usuario Registrado Correctamente" });
         }
     }
 }

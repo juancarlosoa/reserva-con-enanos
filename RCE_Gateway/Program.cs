@@ -24,12 +24,10 @@ builder
         };
     });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("RequireAuthenticatedUser", policy => policy.RequireAuthenticatedUser());
-    options.AddPolicy("ProvidersOnly", policy => policy.RequireRole("Provider"));
-    options.AddPolicy("RoomsOnly", policy => policy.RequireRole("Room"));
-});
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("RequireAuthenticatedUser", policy => policy.RequireAuthenticatedUser())
+    .AddPolicy("ProvidersOnly", policy => policy.RequireRole("Provider"))
+    .AddPolicy("RoomsOnly", policy => policy.RequireRole("Room"));
 
 builder.Services.AddCors(options =>
 {
