@@ -14,7 +14,7 @@ public class EscapeRoomProviderRepository : IEscapeRoomProviderRepository
     {
         _context = context;
     }
-    
+
     public async Task<EscapeRoomProvider> AddAsync(EscapeRoomProvider provider)
     {
         await _context.EscapeRoomProviders.AddAsync(provider);
@@ -27,7 +27,8 @@ public class EscapeRoomProviderRepository : IEscapeRoomProviderRepository
     {
         var room = await _context.EscapeRoomProviders.FindAsync(id);
 
-        if (room == null) return false;
+        if (room == null)
+            return false;
 
         _context.EscapeRoomProviders.Remove(room);
         await SaveChangesAsync();
@@ -52,8 +53,8 @@ public class EscapeRoomProviderRepository : IEscapeRoomProviderRepository
 
         return provider;
     }
-    
-    public async Task SaveChangesAsync()
+
+    private async Task SaveChangesAsync()
     {
         await _context.SaveChangesAsync();
     }

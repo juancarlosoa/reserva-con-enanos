@@ -15,14 +15,16 @@ namespace ReservaConEnanos.Providers.EscapeRoomProviders.Controllers
         {
             _providerService = providerService;
         }
-        
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EscapeRoomProviderResponseDTO>>> GetAllProviders()
+        public async Task<
+            ActionResult<IEnumerable<EscapeRoomProviderResponseDTO>>
+        > GetAllProviders()
         {
             var providers = await _providerService.GetAllProviders();
             return Ok(providers);
         }
-        
+
         [HttpGet("{providerId}")]
         public async Task<ActionResult<EscapeRoomProviderResponseDTO>> GetProviderById(Guid providerId)
         {
@@ -36,7 +38,11 @@ namespace ReservaConEnanos.Providers.EscapeRoomProviders.Controllers
         public async Task<ActionResult<EscapeRoomProviderResponseDTO>> CreateProvider([FromBody] EscapeRoomProviderCreateDTO dto)
         {
             var created = await _providerService.CreateProviderAsync(dto);
-            return CreatedAtAction(nameof(GetProviderById), new { providerId = created.Id }, created);
+            return CreatedAtAction(
+                nameof(GetProviderById),
+                new { providerId = created.Id },
+                created
+            );
         }
 
         [HttpPut]

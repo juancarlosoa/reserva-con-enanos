@@ -1,0 +1,6 @@
+@RCE_Auth_HostAddress = http://localhost:5277
+
+GET {{RCE_Auth_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

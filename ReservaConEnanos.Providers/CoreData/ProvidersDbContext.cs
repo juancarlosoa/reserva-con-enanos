@@ -1,12 +1,13 @@
 using Microsoft.EntityFrameworkCore;
-using ReservaConEnanos.Providers.Rooms.Entities;
 using ReservaConEnanos.Providers.EscapeRoomProviders.Entities;
+using ReservaConEnanos.Providers.Rooms.Entities;
 
 namespace ReservaConEnanos.Providers.CoreData;
 
-public class ProvidersDbContext: DbContext
+public class ProvidersDbContext : DbContext
 {
-    public ProvidersDbContext(DbContextOptions<ProvidersDbContext> options) : base(options) {}
+    public ProvidersDbContext(DbContextOptions<ProvidersDbContext> options)
+        : base(options) { }
 
     public DbSet<EscapeRoomProvider> EscapeRoomProviders => Set<EscapeRoomProvider>();
     public DbSet<Room> Rooms => Set<Room>();
@@ -15,12 +16,11 @@ public class ProvidersDbContext: DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<EscapeRoomProvider>()
-            .HasKey(p => p.Id);
-        modelBuilder.Entity<Room>()
-            .HasKey(r => r.Id);
+        modelBuilder.Entity<EscapeRoomProvider>().HasKey(p => p.Id);
+        modelBuilder.Entity<Room>().HasKey(r => r.Id);
 
-        modelBuilder.Entity<EscapeRoomProvider>()
+        modelBuilder
+            .Entity<EscapeRoomProvider>()
             .HasMany(p => p.Rooms)
             .WithOne(r => r.Provider)
             .HasForeignKey(r => r.ProviderId)
