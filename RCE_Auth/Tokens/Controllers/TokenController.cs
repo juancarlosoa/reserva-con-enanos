@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using RCE_Auth.Tokens.DTOs;
 using RCE_Auth.Tokens.Services;
 using RCE_Auth.Users.Entities;
 
@@ -16,18 +17,9 @@ namespace RCE_Auth.Tokens.Controllers
             _tokenProvider = tokenProvider;
         }
 
-
-        [HttpGet]
-        public Task<string> CreateUserToken()
+        [HttpPost]
+        public Task<TokenResponseDTO> CreateUserToken([FromBody] User user)
         {
-            var user = new User
-            {
-                Email = "",
-                EmailVerified = true,
-                Id = Guid.NewGuid(),
-                PasswordHash = "",
-                Role = UserRole.Room
-            };
             return Task.FromResult(_tokenProvider.GenerateToken(user));
         }
 
@@ -45,7 +37,7 @@ namespace RCE_Auth.Tokens.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Token No Valido");
+                return BadRequest(ex.Message);
             }
         }
 
