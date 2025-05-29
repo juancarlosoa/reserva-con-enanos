@@ -20,7 +20,7 @@ public class RegisterService : IRegisterService
     {
         if (_userRepository.GetUserByEmail(dto.Email) is not null)
         {
-            return new RegisterResponseDTO { Success = false, Message = "Ya existe el usuario" };
+            return new RegisterResponseDTO { Success = false, Message = "User already exits" };
         }
         else
         {
@@ -34,7 +34,7 @@ public class RegisterService : IRegisterService
             user.PasswordHash = _passwordHasher.HashPassword(user, dto.Password);
             await _userRepository.AddUserAsync(user);
 
-            return new RegisterResponseDTO { Success = true, Message = "Correcto" };
+            return new RegisterResponseDTO { Success = true, Message = "Successfully registered user" };
         }
     }
 }
