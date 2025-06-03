@@ -34,7 +34,7 @@ builder.Services.AddCors(options =>
         "AllowFrontend",
         builder =>
         {
-            builder.WithOrigins("https://tudominio.com").AllowAnyMethod().AllowAnyHeader();
+            builder.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader();
         }
     );
 });
