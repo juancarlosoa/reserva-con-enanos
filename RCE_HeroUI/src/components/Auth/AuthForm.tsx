@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Form, Input, Button } from '@heroui/react';
 
 type AuthFormProps = {
@@ -6,12 +5,9 @@ type AuthFormProps = {
     onSubmit: (data: Record<string, FormDataEntryValue>) => void;
 }
 export default function AuthForm({ mode, onSubmit }: AuthFormProps) {
-    const [action, setAction] = useState("");
-
     return (
         <Form
             className="w-full max-w-xs flex flex-col gap-4"
-            onReset={() => setAction("reset")}
             onSubmit={(e) => {
                 e.preventDefault();
                 const formData = new FormData(e.currentTarget);
@@ -54,11 +50,6 @@ export default function AuthForm({ mode, onSubmit }: AuthFormProps) {
                     Reset
                 </Button>
             </div>
-            {action && (
-                <div className="text-small text-default-500">
-                    Action: <code>{action}</code>
-                </div>
-            )}
         </Form>
     );
 

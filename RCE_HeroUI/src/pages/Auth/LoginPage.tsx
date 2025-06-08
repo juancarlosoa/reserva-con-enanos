@@ -3,13 +3,22 @@ import AuthForm from "@/components/Auth/AuthForm";
 import { Link } from "@heroui/link";
 import { loginUser } from "@/api/Auth";
 import { useState } from "react";
+import { LoginRequestDTO } from "@/dtos/Auth/LoginRequestDTO";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function LoginPage() {
     const [loginResponse, setLoginResponse] = useState("");
+    const { login } = useAuth();
+
     const handleLogin = async (data: Record<string, FormDataEntryValue>) => {
         try {
-            const result = await loginUser(data.email as string, data.password as string);
+            const dto: LoginRequestDTO = {
+                email: data.email as string,
+                password: data.password as string,
+            };
+            const result = await loginUser(dto);
             setLoginResponse(result);
+            login(result.token as string, result)
         } catch (err) {
             setLoginResponse(String(err));
         }

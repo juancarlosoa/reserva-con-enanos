@@ -2,13 +2,20 @@ import DefaultLayout from "@/layouts/default";
 import AuthForm from "@/components/Auth/AuthForm";
 import { Link } from "@heroui/link";
 import { useState } from "react";
-import { loginUser } from "@/api/Auth";
+import { registerUser } from "@/api/Auth";
+import { RegisterRequestDTO } from "@/dtos/Auth/RegisterRequestDTO";
 
 export default function RegisterPage() {
     const [registerResponse, setRegisterResponse] = useState("");
     const handleRegister = async (data: Record<string, FormDataEntryValue>) => {
         try {
-            const result = await loginUser(data.user as string, data.email as string);
+            const dto: RegisterRequestDTO = {
+                email: data.email as string,
+                password: data.password as string,
+                confirmPassword: data.confirmPassword as string,
+                role: data.role as string
+            }
+            const result = await registerUser(dto);
             setRegisterResponse(result);
         } catch (err) {
             setRegisterResponse(String(err));
