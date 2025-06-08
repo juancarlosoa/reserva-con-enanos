@@ -43,7 +43,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     app.MapScalarApiReference();
-    app.UseScalar();
 }
 
 app.UseHttpsRedirection();

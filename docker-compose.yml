@@ -7,7 +7,8 @@ services:
         PROJECT: RCE_Gateway
     ports:
       - "5101:8080"
-
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
   auth:
     build:
       context: .

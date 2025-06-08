@@ -5,6 +5,7 @@ import { loginUser } from "@/api/Auth";
 import { useState } from "react";
 import { LoginRequestDTO } from "@/dtos/Auth/LoginRequestDTO";
 import { useAuth } from "@/contexts/AuthContext";
+import { User } from "@/models/User";
 
 export default function LoginPage() {
     const [loginResponse, setLoginResponse] = useState("");
@@ -18,7 +19,13 @@ export default function LoginPage() {
             };
             const result = await loginUser(dto);
             setLoginResponse(result);
-            login(result.token as string, result)
+            // Mapea los valores que quieras del resultado a la clase User
+            let user: User = {
+                id: result.userId,
+                email: result.user.email,
+                role: result.userRole
+            };
+            login(result.token as string, user);
         } catch (err) {
             setLoginResponse(String(err));
         }

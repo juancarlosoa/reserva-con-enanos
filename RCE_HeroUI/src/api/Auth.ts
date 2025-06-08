@@ -1,7 +1,7 @@
 import { LoginRequestDTO } from "@/dtos/Auth/LoginRequestDTO";
 import { RegisterRequestDTO } from "@/dtos/Auth/RegisterRequestDTO";
 
-const urlBase = "http://localhost:5106/auth/api/";
+const urlBase = "http://localhost:5101/auth/api/";
 
 export async function loginUser(dto: LoginRequestDTO) {
     const response = await fetch(urlBase + "login", {
