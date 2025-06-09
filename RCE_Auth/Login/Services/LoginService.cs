@@ -1,6 +1,4 @@
-﻿using Azure.Core;
-using Microsoft.AspNetCore.Identity;
-using NuGet.Common;
+﻿using Microsoft.AspNetCore.Identity;
 using RCE_Auth.Login.DTOs;
 using RCE_Auth.Tokens.Services;
 using RCE_Auth.Users.Entities;
@@ -29,18 +27,18 @@ namespace RCE_Auth.Login.Services
             {
                 return Task.FromResult(new LoginResponseDTO
                 {
-                    Token ="error",
+                    Token = "error",
                     Expiration = DateTime.UtcNow
                 });
-            } 
-           
+            }
+
             var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
 
             if (result != PasswordVerificationResult.Success)
             {
                 return Task.FromResult(new LoginResponseDTO
                 {
-                    Token ="error",
+                    Token = "error",
                     Expiration = DateTime.UtcNow
                 });
             }
@@ -51,7 +49,7 @@ namespace RCE_Auth.Login.Services
                 Token = token.Token,
                 Expiration = token.ExpiresAt
             });
-            
+
         }
     }
 }

@@ -9,6 +9,9 @@ services:
       - "5101:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - rce_network
+
   auth:
     build:
       context: .
@@ -19,3 +22,49 @@ services:
       - "5102:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - rce_network
+    depends_on:
+      - postgres
+
+  heroui:
+    build:
+      context: ./RCE_HeroUI
+      dockerfile: Dockerfile
+    ports:
+      - "5100:8080"
+    networks:
+      - rce_network
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    environment:
+      POSTGRES_PASSWORD: AdminPostgresPassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./dbInit:/docker-entrypoint-initdb.d
+    networks:
+      - rce_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: rce_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    networks:
+      - rce_network
+    depends_on:
+      - postgres
+
+networks:
+  rce_network:
+
+
+volumes:
+  postgres-data:
