@@ -30,9 +30,12 @@ services:
   heroui:
     build:
       context: ./RCE_HeroUI
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./RCE_HeroUI:/app
+      - /app/node_modules
     ports:
-      - "5100:8080"
+      - "5173:5173"
     networks:
       - rce_network
 

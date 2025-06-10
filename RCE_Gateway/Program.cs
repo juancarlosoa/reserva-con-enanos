@@ -34,14 +34,13 @@ builder.Services.AddCors(options =>
         "AllowFrontend",
         builder =>
         {
-            builder.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader();
+            builder.WithOrigins("http://heroui:5173").AllowAnyMethod().AllowAnyHeader();
         }
     );
 });
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
