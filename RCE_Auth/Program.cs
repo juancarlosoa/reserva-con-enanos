@@ -8,8 +8,8 @@ using RCE_Auth.Register.Services;
 using RCE_Auth.Register.Validators;
 using RCE_Auth.Tokens.Services;
 using RCE_Auth.Tokens.Settings;
-using RCE_Auth.Users.Entities;
-using RCE_Auth.Users.Repositories;
+using RCE_Auth.UsersRoles.Entities;
+using RCE_Auth.UsersRoles.Repositories;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);

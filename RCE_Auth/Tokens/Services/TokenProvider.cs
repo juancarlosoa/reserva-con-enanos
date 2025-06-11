@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using RCE_Auth.Tokens.DTOs;
 using RCE_Auth.Tokens.Settings;
-using RCE_Auth.Users.Entities;
+using RCE_Auth.UsersRoles.Entities;
 
 namespace RCE_Auth.Tokens.Services;
 
@@ -32,7 +32,7 @@ public sealed class TokenProvider : ITokenProvider
                     new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
                     new Claim(JwtRegisteredClaimNames.PhoneNumberVerified, user.EmailVerified.ToString()),
-                    new Claim(ClaimTypes.Role, user.Role.ToString()),
+                    //new Claim(ClaimTypes.Role, user.Role.ToString()),
                 ]
             ),
             Expires = expiresAt,

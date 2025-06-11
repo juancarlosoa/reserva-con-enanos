@@ -1,8 +1,6 @@
-using System;
-using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using RCE_Auth.Tokens.DTOs;
-using RCE_Auth.Users.Entities;
+using RCE_Auth.UsersRoles.Entities;
 
 namespace RCE_Auth.Tokens.Services;
 
