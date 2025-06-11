@@ -28,7 +28,7 @@ export default function RegisterPage() {
                 <p className="mt-4 text-sm text-gray-600">
                     Already have an account? <Link href="/login" className="text-blue-600">Login</Link>
                 </p>
-                <p>{registerResponse}</p>
+                <p>{JSON.stringify(registerResponse)}</p>
             </section>
         </DefaultLayout>
     );

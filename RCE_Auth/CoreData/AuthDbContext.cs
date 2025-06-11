@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
-using RCE_Auth.Users.Entities;
+using RCE_Auth.UsersRoles.Entities;
 
 namespace RCE_Auth.CoreData;
 
@@ -10,7 +10,6 @@ public class AuthDbContext : DbContext
     public AuthDbContext(DbContextOptions<AuthDbContext> options)
         : base(options)
     {
-
         try
         {
             var databaseCreator = Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
@@ -43,6 +42,9 @@ public class AuthDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<User>().Property(u => u.Role).HasConversion<string>().HasMaxLength(50);
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Roles)
+            .WithMany(r => r.Users)
+            .UsingEntity(j => j.ToTable("UserRoles"));
     }
 }

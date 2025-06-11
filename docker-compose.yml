@@ -62,6 +62,8 @@ services:
       - "5050:80"
     networks:
       - rce_network
+    volumes:
+      - ./servers.json:/pgadmin4/servers.json
     depends_on:
       - postgres
 

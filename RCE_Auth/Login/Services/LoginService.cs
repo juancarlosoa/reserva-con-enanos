@@ -47,9 +47,11 @@ namespace RCE_Auth.Login.Services
             return Task.FromResult(new LoginResponseDTO
             {
                 Token = token.Token,
-                Expiration = token.ExpiresAt
+                Expiration = token.ExpiresAt,
+                UserId = user.Id,
+                UserRoles = user.Roles,
+                EmailVerified = user.EmailVerified
             });
-
         }
     }
 }

@@ -1,4 +1,4 @@
-namespace RCE_Auth.Users.Entities;
+namespace RCE_Auth.UsersRoles.Entities;
 
 public class User
 {
@@ -6,11 +6,5 @@ public class User
     public string Email { get; set; } = string.Empty;
     public bool EmailVerified { get; set; } = false;
     public string PasswordHash { get; set; } = string.Empty;
-    public UserRole Role { get; set; }
-}
-
-public enum UserRole
-{
-    Provider,
-    Room,
+    public ICollection<Role> Roles { get; set; } = [];
 }

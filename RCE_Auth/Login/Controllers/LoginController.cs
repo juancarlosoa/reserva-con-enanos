@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RCE_Auth.Login.DTOs;
 using RCE_Auth.Login.Services;
-using RCE_Auth.Users.Entities;
+using RCE_Auth.UsersRoles.Entities;
 
 namespace RCE_Auth.Login.Controllers
 {

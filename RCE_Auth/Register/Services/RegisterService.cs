@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using RCE_Auth.Register.DTOs;
-using RCE_Auth.Users.Entities;
-using RCE_Auth.Users.Repositories;
+using RCE_Auth.UsersRoles.Entities;
+using RCE_Auth.UsersRoles.Repositories;
 
 namespace RCE_Auth.Register.Services;
 
@@ -28,7 +28,7 @@ public class RegisterService : IRegisterService
             {
                 Email = dto.Email,
                 EmailVerified = false,
-                Role = dto.Role,
+                Roles = dto.Roles,
             };
 
             user.PasswordHash = _passwordHasher.HashPassword(user, dto.Password);

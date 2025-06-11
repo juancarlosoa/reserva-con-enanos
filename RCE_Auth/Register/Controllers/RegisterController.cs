@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RCE_Auth.Register.DTOs;
 using RCE_Auth.Register.Services;

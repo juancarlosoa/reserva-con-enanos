@@ -1,6 +1,6 @@
-using RCE_Auth.Users.Entities;
+using RCE_Auth.UsersRoles.Entities;
 
-namespace RCE_Auth.Users.Repositories;
+namespace RCE_Auth.UsersRoles.Repositories;
 
 public interface IUserRepository
 {

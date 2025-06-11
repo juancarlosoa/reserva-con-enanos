@@ -1,4 +1,4 @@
-using RCE_Auth.Users.Entities;
+using RCE_Auth.UsersRoles.Entities;
 
 namespace RCE_Auth.Register.DTOs;
 
@@ -7,5 +7,5 @@ public class RegisterRequestDTO
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
     public string ConfirmPassword { get; set; } = string.Empty;
-    public UserRole Role { get; set; } = UserRole.Room;
+    public ICollection<Role> Roles { get; set; } = [];
 }
