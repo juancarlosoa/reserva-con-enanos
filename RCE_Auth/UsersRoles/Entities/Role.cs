@@ -1,8 +1,8 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace RCE_Auth.UsersRoles.Entities;
 
-public class Role
+public class Role : IdentityRole
 {
-    public Guid Id { get; set; }
-    public string Name { get; set; } = "";
     public ICollection<User> Users { get; set; } = [];
 }

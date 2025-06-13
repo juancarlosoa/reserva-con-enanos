@@ -41,8 +41,6 @@ export default function AuthForm({ mode, onSubmit }: AuthFormProps) {
                     placeholder="Repeat your password"
                     type="password"
                 />
-
-
             )}
             <div className="flex gap-2">
                 <Button color="primary" type="submit">

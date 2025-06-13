@@ -1,37 +1,64 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RCE_Auth.CoreData;
-using RCE_Auth.Login.Services;
-using RCE_Auth.Register.Services;
-using RCE_Auth.Register.Validators;
-using RCE_Auth.Tokens.Services;
-using RCE_Auth.Tokens.Settings;
 using RCE_Auth.UsersRoles.Entities;
-using RCE_Auth.UsersRoles.Repositories;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AuthDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseOpenIddict();
+});
 
-builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
-builder.Services.AddScoped<ITokenProvider, TokenProvider>();
+builder.Services.AddOpenIddict()
+    .AddCore(options =>
+    {
+        options.UseEntityFrameworkCore()
+               .UseDbContext<AuthDbContext>();
+    })
+    .AddServer(options =>
+    {
+        options.SetAuthorizationEndpointUris("/connect/authorize");
+        options.SetTokenEndpointUris("/connect/token");
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IRegisterService, RegisterService>();
-builder.Services.AddScoped<ILoginService, LoginService>();
-builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+        options.AllowAuthorizationCodeFlow()
+               .RequireProofKeyForCodeExchange(); // Esto activa PKCE
 
-builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+        options.AllowRefreshTokenFlow();
 
-builder.Services.AddFluentValidationAutoValidation()
-                .AddFluentValidationClientsideAdapters()
-                .AddValidatorsFromAssemblyContaining<RegisterRequestDTOValidator>();
+        options.RegisterScopes("openid", "profile", "email");
+
+        options.AcceptAnonymousClients(); // o configura cliente confidencial con secreto
+
+        options.AddDevelopmentEncryptionCertificate()
+               .AddDevelopmentSigningCertificate();
+
+        options.UseAspNetCore()
+               .EnableAuthorizationEndpointPassthrough()
+               .EnableTokenEndpointPassthrough()
+               .EnableUserInfoEndpointPassthrough(); // opcional si expones user info
+    });
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddGoogle("Google", options =>
+{
+    options.ClientId = builder.Configuration["Google:ClientId"]!;
+    options.ClientSecret = builder.Configuration["Google:ClientSecret"]!;
+    options.CallbackPath = "/signin-google";
+});
+builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -43,6 +70,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.MapScalarApiReference();
 }
+
+app.UseForwardedHeaders();
+
+// app.UseRouting();
+
+app.UseCors(policy =>
+    policy.AllowAnyOrigin()
+          .AllowAnyHeader()
+          .AllowAnyMethod()
+);
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 app.Run();

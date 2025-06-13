@@ -1,34 +1,16 @@
 import DefaultLayout from "@/layouts/default";
 import AuthForm from "@/components/Auth/AuthForm";
 import { Link } from "@heroui/link";
-import { loginUser } from "@/api/Auth";
-import { LoginRequestDTO } from "@/dtos/Auth/LoginRequestDTO";
-import { useAuth } from "@/contexts/AuthContext";
-import { User } from "@/models/User";
+import { AuthService } from "@/services/Auth/AuthService";
 
 export default function LoginPage() {
-    const { login } = useAuth();
-
-    const handleLogin = async (data: Record<string, FormDataEntryValue>) => {
-        try {
-            const dto: LoginRequestDTO = {
-                email: data.email as string,
-                password: data.password as string,
-            };
-            const result = await loginUser(dto);
-            if (result.userId) {
-                let user: User = {
-                    id: result.userId,
-                    email: data.email as string,
-                    role: result.userRole
-                };
-                login(result.token as string, user);
-            } else {
-                // mostrar error
+ 
+    const handleLogin = async () => {
+            try {
+              await AuthService.initiateLogin();
+            } catch (error) {
+              console.error('Login failed:', error);
             }
-        } catch (err) {
-
-        }
     };
 
     return (
