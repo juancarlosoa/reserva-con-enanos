@@ -1,8 +1,8 @@
 import { generateCodeVerifier, generateCodeChallenge } from './PkceService';
 
 export class AuthService {
-  private static readonly AUTH_ENDPOINT = '/auth/api/connect/authorize';
-  private static readonly TOKEN_ENDPOINT = '/auth/api/connect/token';
+  private static readonly AUTH_ENDPOINT = '/auth/connect/authorize';
+  private static readonly TOKEN_ENDPOINT = '/auth/connect/token';
   private static readonly CLIENT_ID = 'web-app'; // El ID que configuramos en el backend
   private static readonly REDIRECT_URI = '/callback'; // Tu URL de callback
 
@@ -15,7 +15,7 @@ export class AuthService {
     sessionStorage.setItem('code_verifier', codeVerifier);
 
     // Construir la URL de autorización
-    const authUrl = new URL(this.AUTH_ENDPOINT);
+    const authUrl = new URL(this.AUTH_ENDPOINT, window.location.origin);
     authUrl.searchParams.append('client_id', this.CLIENT_ID);
     authUrl.searchParams.append('response_type', 'code');
     authUrl.searchParams.append('scope', 'openid profile email api');
