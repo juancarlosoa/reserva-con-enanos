@@ -3,8 +3,8 @@ import { generateCodeVerifier, generateCodeChallenge } from './PkceService';
 export class AuthService {
   private static readonly AUTH_ENDPOINT = '/auth/connect/authorize';
   private static readonly TOKEN_ENDPOINT = '/auth/connect/token';
-  private static readonly CLIENT_ID = 'web-app'; // El ID que configuramos en el backend
-  private static readonly REDIRECT_URI = '/callback'; // Tu URL de callback
+  private static readonly CLIENT_ID = 'react-heroui';
+  private static readonly REDIRECT_URI = window.location.origin + '/callback';
 
   public static async initiateLogin() {
     // Generar PKCE

@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using OpenIddict.Abstractions;
 using RCE_Auth.CoreData;
 using RCE_Auth.UsersRoles.Entities;
 using Scalar.AspNetCore;
@@ -14,6 +15,10 @@ builder.Services.AddDbContext<AuthDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
     options.UseOpenIddict();
 });
+
+builder.Services.AddIdentity<User, Role>()
+    .AddEntityFrameworkStores<AuthDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddOpenIddict()
     .AddCore(options =>
@@ -27,13 +32,13 @@ builder.Services.AddOpenIddict()
         options.SetTokenEndpointUris("/connect/token");
 
         options.AllowAuthorizationCodeFlow()
-               .RequireProofKeyForCodeExchange(); // Esto activa PKCE
+               .RequireProofKeyForCodeExchange();
 
         options.AllowRefreshTokenFlow();
 
-        options.RegisterScopes("openid", "profile", "email");
+        options.RegisterScopes("openid", "profile", "email", "api");
 
-        options.AcceptAnonymousClients(); // o configura cliente confidencial con secreto
+        options.AcceptAnonymousClients();
 
         options.AddDevelopmentEncryptionCertificate()
                .AddDevelopmentSigningCertificate();
@@ -41,7 +46,7 @@ builder.Services.AddOpenIddict()
         options.UseAspNetCore()
                .EnableAuthorizationEndpointPassthrough()
                .EnableTokenEndpointPassthrough()
-               .EnableUserInfoEndpointPassthrough(); // opcional si expones user info
+               .EnableUserInfoEndpointPassthrough();
     });
 
 builder.Services.AddAuthentication(options =>
@@ -64,6 +69,67 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+static string MapPermission(string permission)
+{
+    return permission switch
+    {
+        "Endpoints:Authorization" => OpenIddictConstants.Permissions.Endpoints.Authorization,
+        "Endpoints:Token" => OpenIddictConstants.Permissions.Endpoints.Token,
+        "GrantTypes:AuthorizationCode" => OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
+        "GrantTypes:RefreshToken" => OpenIddictConstants.Permissions.GrantTypes.RefreshToken,
+        "ResponseTypes:Code" => OpenIddictConstants.Permissions.ResponseTypes.Code,
+        "Features:ProofKeyForCodeExchange" => OpenIddictConstants.Requirements.Features.ProofKeyForCodeExchange,
+        _ => permission
+    };
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
+    var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+    var clientsSection = configuration.GetSection("OAuth:Clients");
+    var clients = clientsSection.GetChildren();
+
+    foreach (var client in clients)
+    {
+        var clientId = client["ClientId"];
+        if (string.IsNullOrEmpty(clientId))
+            continue;
+
+        if (await manager.FindByClientIdAsync(clientId) is null)
+        {
+            var descriptor = new OpenIddictApplicationDescriptor
+            {
+                ClientId = clientId,
+                ClientSecret = client["ClientSecret"],
+                DisplayName = client["DisplayName"]
+            };
+
+            var redirectUri = client["RedirectUri"];
+            if (!string.IsNullOrEmpty(redirectUri))
+                descriptor.RedirectUris.Add(new Uri(redirectUri));
+            var scopes = client.GetSection("Scopes").Get<string[]>();
+            if (scopes != null)
+            {
+                foreach (var sc in scopes)
+                {
+                    descriptor.Permissions.Add(OpenIddictConstants.Permissions.Prefixes.Scope + sc);
+                }
+            }
+            var permissions = client.GetSection("Permissions").Get<string[]>();
+            if (permissions != null)
+            {
+                foreach (var permission in permissions)
+                {
+                    descriptor.Permissions.Add(MapPermission(permission));
+                }
+            }
+
+            await manager.CreateAsync(descriptor);
+        }
+    }
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -73,8 +139,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseForwardedHeaders();
 
-// app.UseRouting();
-
+app.UseHttpsRedirection();
 app.UseCors(policy =>
     policy.AllowAnyOrigin()
           .AllowAnyHeader()
@@ -83,6 +148,5 @@ app.UseCors(policy =>
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 app.Run();

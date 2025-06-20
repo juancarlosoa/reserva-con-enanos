@@ -7,8 +7,13 @@ services:
         PROJECT: RCE_Gateway
     ports:
       - "5101:8080"
+    volumes:
+      - ./certs:/https:ro
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_Kestrel__Endpoints__Https__Url=https://*:8080
+      - ASPNETCORE_Kestrel__Endpoints__Https__Certificate__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Endpoints__Https__Certificate__Password=RCE
     networks:
       - rce_network
 
@@ -17,11 +22,17 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
+
         PROJECT: RCE_Auth
     ports:
       - "5102:8080"
+    volumes:
+      - ./certs:/https:ro
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_Kestrel__Endpoints__Https__Url=https://*:8080
+      - ASPNETCORE_Kestrel__Endpoints__Https__Certificate__Path=/https/aspnetappAuth.pfx
+      - ASPNETCORE_Kestrel__Endpoints__Https__Certificate__Password=RCE
     networks:
       - rce_network
     depends_on:
