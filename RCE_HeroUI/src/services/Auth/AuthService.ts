@@ -1,8 +1,8 @@
 import { generateCodeVerifier, generateCodeChallenge } from './PkceService';
 
 export class AuthService {
-  private static readonly AUTH_ENDPOINT = '/auth/connect/authorize';
-  private static readonly TOKEN_ENDPOINT = '/auth/connect/token';
+  private static readonly AUTH_ENDPOINT = '/connect/authorize';
+  private static readonly TOKEN_ENDPOINT = '/connect/token';
   private static readonly CLIENT_ID = 'react-heroui';
   private static readonly REDIRECT_URI = window.location.origin + '/callback';
 

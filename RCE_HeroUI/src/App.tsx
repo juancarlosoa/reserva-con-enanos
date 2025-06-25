@@ -7,7 +7,7 @@ import RegisterPage from "./pages/Auth/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
 import AdminPage from "./pages/AdminPage";
 import NotFoundPage from "./pages/NotFoundPage";
-import { Callback } from "./components/Auth/CallbackAuth";
+import Callback from "./components/Auth/CallbackAuth";
 
 function App() {
   return (
@@ -17,7 +17,7 @@ function App() {
 
       <Route element={<PublicRoute />}>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/callback" element={<Callback />} />
+        <Route path="/auth/callback" element={<Callback />} />
         <Route path="/register" element={<RegisterPage />} />
       </Route>
 

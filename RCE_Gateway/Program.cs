@@ -45,7 +45,7 @@ builder.Services.AddCors(options =>
         "AllowFrontend",
         builder =>
         {
-            builder.WithOrigins("http://heroui:5173").AllowAnyMethod().AllowAnyHeader();
+            builder.WithOrigins("https://heroui:5173").AllowAnyMethod().AllowAnyHeader();
         }
     );
 });

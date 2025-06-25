@@ -20,18 +20,18 @@ public class AuthController : ControllerBase
         _logger = logger;
     }
 
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
     {
-        var user = await _userManager.FindByEmailAsync(request.Email);
-        if (user == null)
-            return Unauthorized("Invalid credentials");
+        var user = new User { UserName = request.Email, Email = request.Email };
+        var result = await _userManager.CreateAsync(user, request.Password);
 
-        var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
-        if (!result.Succeeded)
-            return Unauthorized("Invalid credentials");
+        if (result.Succeeded)
+        {
+            _logger.LogInformation("User registered: {Email}", request.Email);
+            return Ok(new { message = "User registered successfully" });
+        }
 
-        // Aquí puedes devolver un token, claims, etc.
-        return Ok("Login successful");
+        return BadRequest(result.Errors);
     }
 }

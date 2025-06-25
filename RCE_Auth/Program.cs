@@ -1,6 +1,7 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.Abstractions;
@@ -28,8 +29,9 @@ builder.Services.AddOpenIddict()
     })
     .AddServer(options =>
     {
-        options.SetAuthorizationEndpointUris("/connect/authorize");
-        options.SetTokenEndpointUris("/connect/token");
+        options.SetAuthorizationEndpointUris("/auth/connect/authorize");
+        options.SetTokenEndpointUris("/auth/connect/token");
+        options.SetIssuer(new Uri("https://localhost:5101/auth"));
 
         options.AllowAuthorizationCodeFlow()
                .RequireProofKeyForCodeExchange();
@@ -53,21 +55,35 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
-.AddCookie()
+.AddCookie(options =>
+{
+    options.LoginPath = "/account/login";
+    options.LogoutPath = "/account/logout";
+
+})
 .AddGoogle("Google", options =>
 {
     options.ClientId = builder.Configuration["Google:ClientId"]!;
     options.ClientSecret = builder.Configuration["Google:ClientSecret"]!;
     options.CallbackPath = "/signin-google";
 });
+
 builder.Services.AddAuthorization();
 
-builder.Services.AddControllers();
+builder.Services.AddControllersWithViews();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedHost | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 var app = builder.Build();
+app.UseForwardedHeaders();
+app.UseRouting();
 
 static string MapPermission(string permission)
 {
@@ -137,8 +153,6 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseForwardedHeaders();
-
 app.UseHttpsRedirection();
 app.UseCors(policy =>
     policy.AllowAnyOrigin()
@@ -149,4 +163,5 @@ app.UseCors(policy =>
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapDefaultControllerRoute();
 app.Run();

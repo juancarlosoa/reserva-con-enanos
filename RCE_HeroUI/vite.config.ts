@@ -22,12 +22,5 @@ export default defineConfig({
       usePolling: true,
       interval: 100,
     },
-    proxy: {
-      '/auth': {
-        target: 'https://gateway:8080',
-        changeOrigin: true,
-        secure: false,
-      },
-    },
   },
 });
