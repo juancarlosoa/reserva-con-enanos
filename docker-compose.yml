@@ -83,6 +83,8 @@ services:
       dockerfile: Dockerfile
       args:
         PROJECT: RCE_Providers
+    ports:
+      - "5103:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     networks:
