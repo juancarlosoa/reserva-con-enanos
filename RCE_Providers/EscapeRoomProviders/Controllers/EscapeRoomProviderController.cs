@@ -5,7 +5,7 @@ using RCE_Providers.Rooms.DTOs;
 
 namespace RCE_Providers.EscapeRoomProviders.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("providers")]
     [ApiController]
     public class EscapeRoomProviderController : ControllerBase
     {
@@ -17,9 +17,7 @@ namespace RCE_Providers.EscapeRoomProviders.Controllers
         }
 
         [HttpGet]
-        public async Task<
-            ActionResult<IEnumerable<EscapeRoomProviderResponseDTO>>
-        > GetAllProviders()
+        public async Task<ActionResult<IEnumerable<EscapeRoomProviderResponseDTO>>> GetAllProviders()
         {
             var providers = await _providerService.GetAllProviders();
             return Ok(providers);

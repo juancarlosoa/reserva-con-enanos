@@ -9,8 +9,8 @@ export const siteConfig = {
       href: "/",
     },
     {
-      label: "Login",
-      href: "/login",
+      label: "Providers",
+      href: "/providers",
     },
   ],
   navMenuItems: [

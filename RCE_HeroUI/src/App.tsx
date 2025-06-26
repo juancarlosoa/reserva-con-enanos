@@ -2,12 +2,12 @@ import { Route, Routes } from "react-router-dom";
 import { PrivateRoute, PublicRoute, AdminRoute } from "./routes/ProtectedRoutes";
 
 import IndexPage from "@/pages/index";
-import LoginPage from "@/pages/Auth/LoginPage";
-import RegisterPage from "./pages/Auth/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
 import AdminPage from "./pages/AdminPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import Callback from "./components/Auth/CallbackAuth";
+import { ProvidersList } from "./pages/Providers/ProvidersListPage";
+import { ProviderDetail } from "./pages/Providers/ProviderDetailPage";
 
 function App() {
   return (
@@ -16,9 +16,9 @@ function App() {
       <Route path="*" element={<NotFoundPage />} />
 
       <Route element={<PublicRoute />}>
-        <Route path="/login" element={<LoginPage />} />
         <Route path="/auth/callback" element={<Callback />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/providers" element={<ProvidersList />} />
+        <Route path="/providers/:id" element={<ProviderDetail />} />
       </Route>
 
       <Route element={<PrivateRoute />}>
