@@ -4,7 +4,7 @@ using RCE_Providers.Rooms.Services;
 
 namespace RCE_Providers.Rooms.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("rooms")]
     [ApiController]
     public class RoomController : ControllerBase
     {
@@ -16,11 +16,10 @@ namespace RCE_Providers.Rooms.Controllers
         }
 
         [HttpGet("{roomId}")]
-        public async Task<ActionResult<RoomResponseDTO>> GetById(Guid roomId)
+        public async Task<ActionResult<RoomResponseDTO>> GetRoomById(Guid roomId)
         {
             var room = await _roomService.GetRoomByIdAsync(roomId);
-            if (room == null)
-                return NotFound();
+            if (room == null) return NotFound();
 
             return Ok(room);
         }
@@ -29,7 +28,11 @@ namespace RCE_Providers.Rooms.Controllers
         public async Task<ActionResult<RoomResponseDTO>> CreateRoom([FromBody] RoomRequestDTO dto)
         {
             var createdRoom = await _roomService.CreateRoomAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { roomId = createdRoom.Id }, createdRoom);
+            return CreatedAtAction(
+                nameof(GetRoomById),
+                new { roomId = createdRoom.Id },
+                createdRoom
+                );
         }
 
         [HttpPut]
@@ -43,10 +46,7 @@ namespace RCE_Providers.Rooms.Controllers
         public async Task<IActionResult> DeleteRoom(Guid roomId)
         {
             var success = await _roomService.DeleteRoom(roomId);
-            if (!success)
-            {
-                return NotFound();
-            }
+            if (!success) return NotFound();
 
             return Ok();
         }

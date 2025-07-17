@@ -21,13 +21,17 @@ public class EscapeRoomProviderService : IEscapeRoomProviderService
     {
         var provider = _mapper.Map<EscapeRoomProvider>(dto);
         await _repository.AddAsync(provider);
+        await _repository.SaveChangesAsync();
 
         return _mapper.Map<EscapeRoomProviderResponseDTO>(provider);
     }
 
     public async Task<bool> DeleteProvider(Guid providerId)
     {
-        return await _repository.DeleteAsync(providerId);
+        var deleted = await _repository.DeleteAsync(providerId);
+        if (deleted) await _repository.SaveChangesAsync();
+
+        return deleted;
     }
 
     public async Task<IEnumerable<EscapeRoomProviderResponseDTO>> GetAllProviders()
@@ -54,8 +58,9 @@ public class EscapeRoomProviderService : IEscapeRoomProviderService
     public async Task<EscapeRoomProviderResponseDTO> UpdateProviderAsync(EscapeRoomProviderUpdateDTO dto)
     {
         var provider = _mapper.Map<EscapeRoomProvider>(dto);
-        await _repository.UpdateAsync(provider);
+        _repository.UpdateAsync(provider);
 
+        await _repository.SaveChangesAsync();
         return _mapper.Map<EscapeRoomProviderResponseDTO>(provider);
     }
 }

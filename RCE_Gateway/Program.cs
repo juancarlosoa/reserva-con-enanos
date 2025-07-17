@@ -45,16 +45,20 @@ builder.Services.AddCors(options =>
         "AllowFrontend",
         builder =>
         {
-            builder.WithOrigins("https://heroui:5173").AllowAnyMethod().AllowAnyHeader();
+            builder.WithOrigins("https://localhost:5173").AllowAnyMethod().AllowAnyHeader();
         }
     );
 });
 
 var app = builder.Build();
+
 app.UseHttpsRedirection();
-app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapReverseProxy();
+
+app.MapReverseProxy(proxyPipeline =>
+{
+    proxyPipeline.UseCors("AllowFrontend");
+});
 
 app.Run();

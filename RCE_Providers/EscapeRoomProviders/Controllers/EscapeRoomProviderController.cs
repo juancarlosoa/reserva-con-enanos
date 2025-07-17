@@ -54,10 +54,9 @@ namespace RCE_Providers.EscapeRoomProviders.Controllers
         public async Task<IActionResult> DeleteProvider(Guid providerId)
         {
             var success = await _providerService.DeleteProvider(providerId);
-            if (!success)
-                return NotFound();
+            if (!success) return NotFound();
 
-            return NoContent();
+            return Ok();
         }
 
         [HttpGet("{providerId}/rooms")]

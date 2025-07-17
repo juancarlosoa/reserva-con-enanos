@@ -15,11 +15,6 @@ import clsx from "clsx";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import {
-  GithubIcon,
-  SearchIcon,
-} from "@/components/icons";
-import { Logo } from "@/components/icons";
 
 export const Navbar = () => {
   const searchInput = (
@@ -36,9 +31,6 @@ export const Navbar = () => {
       }
       labelPlacement="outside"
       placeholder="Search..."
-      startContent={
-        <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-      }
       type="search"
     />
   );
@@ -52,7 +44,6 @@ export const Navbar = () => {
             color="foreground"
             href="/"
           >
-            <Logo />
             <p className="font-bold text-inherit">RCE</p>
           </Link>
         </NavbarBrand>
@@ -80,7 +71,7 @@ export const Navbar = () => {
       >
         <NavbarItem className="hidden sm:flex gap-2">
           <Link isExternal href={siteConfig.links.github} title="GitHub">
-            <GithubIcon className="text-default-500" />
+            
           </Link>
           <ThemeSwitch />
         </NavbarItem>
@@ -89,7 +80,7 @@ export const Navbar = () => {
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
         <Link isExternal href={siteConfig.links.github}>
-          <GithubIcon className="text-default-500" />
+
         </Link>
         <ThemeSwitch />
         <NavbarMenuToggle />

@@ -1,13 +1,12 @@
 import { Route, Routes } from "react-router-dom";
-import { PrivateRoute, PublicRoute, AdminRoute } from "./routes/ProtectedRoutes";
+import { PrivateRoute, AdminRoute } from "./routes/ProtectedRoutes";
 
 import IndexPage from "@/pages/index";
 import DashboardPage from "./pages/DashboardPage";
 import AdminPage from "./pages/AdminPage";
 import NotFoundPage from "./pages/NotFoundPage";
-import Callback from "./components/Auth/CallbackAuth";
-import { ProvidersList } from "./pages/Providers/ProvidersListPage";
-import { ProviderDetail } from "./pages/Providers/ProviderDetailPage";
+import { ProvidersList } from "./providers/pages/ProvidersListPage";
+import { ProviderDetail } from "./providers/pages/ProviderDetailPage";
 
 function App() {
   return (
@@ -15,11 +14,8 @@ function App() {
       <Route element={<IndexPage />} path="/" />
       <Route path="*" element={<NotFoundPage />} />
 
-      <Route element={<PublicRoute />}>
-        <Route path="/auth/callback" element={<Callback />} />
-        <Route path="/providers" element={<ProvidersList />} />
-        <Route path="/providers/:id" element={<ProviderDetail />} />
-      </Route>
+      <Route path="/providers" element={<ProvidersList />} />
+      <Route path="/providers/:id" element={<ProviderDetail />} />
 
       <Route element={<PrivateRoute />}>
         <Route path="/dashboard" element={<DashboardPage />} />

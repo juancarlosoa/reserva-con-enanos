@@ -20,6 +20,7 @@ public class RoomService : IRoomService
     {
         var newRoom = _mapper.Map<Room>(dto);
         await _repository.AddAsync(newRoom);
+        await _repository.SaveChangesAsync();
 
         return _mapper.Map<RoomResponseDTO>(newRoom);
     }
@@ -34,14 +35,17 @@ public class RoomService : IRoomService
     public async Task<RoomResponseDTO> UpdateRoomAsync(RoomRequestDTO dto)
     {
         var room = _mapper.Map<Room>(dto);
-
-        await _repository.UpdateAsync(room);
+        _repository.UpdateAsync(room);
+        await _repository.SaveChangesAsync();
 
         return _mapper.Map<RoomResponseDTO>(room);
     }
 
     public async Task<bool> DeleteRoom(Guid id)
     {
-        return await _repository.DeleteAsync(id);
+        var deleted = await _repository.DeleteAsync(id);
+        if (deleted) await _repository.SaveChangesAsync();
+
+        return deleted;
     }
 }
