@@ -15,7 +15,7 @@ function App() {
       <Route path="*" element={<NotFoundPage />} />
 
       <Route path="/providers" element={<ProvidersList />} />
-      <Route path="/providers/:id" element={<ProviderDetail />} />
+      <Route path="/providers/:name" element={<ProviderDetail />} />
 
       <Route element={<PrivateRoute />}>
         <Route path="/dashboard" element={<DashboardPage />} />

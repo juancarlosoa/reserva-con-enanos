@@ -22,14 +22,14 @@ public class EscapeRoomProviderRepository : IEscapeRoomProviderRepository
         return provider;
     }
 
-    public async Task<bool> DeleteAsync(Guid id)
+    public void Delete(EscapeRoomProvider provider)
     {
-        var room = await _context.EscapeRoomProviders.FindAsync(id);
-        if (room == null) return false;
+        if (provider == null)
+        {
+            throw new ArgumentNullException(nameof(provider), "Provider cannot be null.");
+        }
 
-        _context.EscapeRoomProviders.Remove(room);
-
-        return true;
+        _context.EscapeRoomProviders.Remove(provider);
     }
 
     public async Task<IEnumerable<EscapeRoomProvider>> GetAllAsync()
@@ -42,11 +42,14 @@ public class EscapeRoomProviderRepository : IEscapeRoomProviderRepository
         return await _context.EscapeRoomProviders.FindAsync(id);
     }
 
-    public EscapeRoomProvider UpdateAsync(EscapeRoomProvider provider)
+    public void Update(EscapeRoomProvider provider)
     {
-        _context.EscapeRoomProviders.Update(provider);
+        if (provider == null)
+        {
+            throw new ArgumentNullException(nameof(provider), "Provider cannot be null.");
+        }
 
-        return provider;
+        _context.EscapeRoomProviders.Update(provider);
     }
 
     public async Task<IEnumerable<Room>> GetRoomsByProviderIdAsync(Guid id)

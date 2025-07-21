@@ -11,9 +11,7 @@ export default function DefaultLayout({
     <div className="p-6 min-h-screen">
       <Navbar />
       <main className="w-full">
-        <div className="mx-auto">
-          {children}
-        </div>
+        <div className="mx-auto max-w-7xl mt-4">{children}</div>
       </main>
       <footer className="w-full flex items-center justify-center py-3">
         <Link

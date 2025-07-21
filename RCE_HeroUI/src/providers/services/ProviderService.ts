@@ -23,8 +23,8 @@ export const ProviderService = {
         return new Provider(dto);
     },
 
-    updateProvider:  async (data: UpdateProviderDTO): Promise<Provider> => {
-        const dto = await providerRepository.updateProvider(data);
+    updateProvider:  async (providerId: string, data: UpdateProviderDTO): Promise<Provider> => {
+        const dto = await providerRepository.updateProvider(providerId, data);
 
         return new Provider(dto);
     },

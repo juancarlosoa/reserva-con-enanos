@@ -43,11 +43,13 @@ namespace RCE_Providers.EscapeRoomProviders.Controllers
             );
         }
 
-        [HttpPut]
-        public async Task<ActionResult<EscapeRoomProviderResponseDTO>> UpdateProvider([FromBody] EscapeRoomProviderUpdateDTO dto)
+        [HttpPut("{providerId}")]
+        public async Task<ActionResult<EscapeRoomProviderResponseDTO>> UpdateProvider(Guid providerId, [FromBody] EscapeRoomProviderUpdateDTO dto)
         {
-            var updated = await _providerService.UpdateProviderAsync(dto);
-            return Ok(updated);
+            var result = await _providerService.UpdateProviderAsync(providerId, dto);
+            if (!result) return NotFound();
+
+            return Ok();
         }
 
         [HttpDelete("{providerId}")]

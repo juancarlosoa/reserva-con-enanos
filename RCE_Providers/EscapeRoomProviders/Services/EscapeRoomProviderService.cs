@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using RCE_Providers.EscapeRoomProviders.DTOs;
 using RCE_Providers.EscapeRoomProviders.Entities;
 using RCE_Providers.EscapeRoomProviders.Repositories;
@@ -28,10 +29,36 @@ public class EscapeRoomProviderService : IEscapeRoomProviderService
 
     public async Task<bool> DeleteProvider(Guid providerId)
     {
-        var deleted = await _repository.DeleteAsync(providerId);
-        if (deleted) await _repository.SaveChangesAsync();
+        var provider = await _repository.GetByIdAsync(providerId);
+        if (provider == null) return false;
+        try
+        {
+            _repository.Delete(provider);
+            await _repository.SaveChangesAsync();
 
-        return deleted;
+            return true;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<bool> UpdateProviderAsync(Guid providerId, EscapeRoomProviderUpdateDTO dto)
+    {
+        var provider = await _repository.GetByIdAsync(providerId);
+        if (provider == null) return false;
+        try
+        {
+            _repository.Update(_mapper.Map(dto, provider));
+            await _repository.SaveChangesAsync();
+
+            return true;
+        }
+        catch
+        {
+            throw;
+        }
     }
 
     public async Task<IEnumerable<EscapeRoomProviderResponseDTO>> GetAllProviders()
@@ -53,14 +80,5 @@ public class EscapeRoomProviderService : IEscapeRoomProviderService
         var rooms = await _repository.GetRoomsByProviderIdAsync(providerId);
 
         return _mapper.Map<IEnumerable<RoomResponseDTO>>(rooms);
-    }
-
-    public async Task<EscapeRoomProviderResponseDTO> UpdateProviderAsync(EscapeRoomProviderUpdateDTO dto)
-    {
-        var provider = _mapper.Map<EscapeRoomProvider>(dto);
-        _repository.UpdateAsync(provider);
-
-        await _repository.SaveChangesAsync();
-        return _mapper.Map<EscapeRoomProviderResponseDTO>(provider);
     }
 }

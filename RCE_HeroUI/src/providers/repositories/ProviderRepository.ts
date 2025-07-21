@@ -18,8 +18,8 @@ export const providerRepository = {
         return apiAdapter.delete(`${REPOSITORY_HOSTS.PROVIDERS}/${providerId}`);
     },
 
-    updateProvider: async (data: UpdateProviderDTO) => {
-        return apiAdapter.post<ProviderResponseDTO>(`${REPOSITORY_HOSTS.PROVIDERS}`, data);
+    updateProvider: async (providerId: string, data: UpdateProviderDTO) => {
+        return apiAdapter.put<ProviderResponseDTO>(`${REPOSITORY_HOSTS.PROVIDERS}/${providerId}`, data);
     },
 
     getProviderRooms: async (providerId: string) => {
