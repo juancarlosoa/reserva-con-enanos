@@ -9,9 +9,8 @@ import {
 } from "@heroui/react";
 import { useEffect, useState } from "react";
 import { ProviderService } from "../services/ProviderService";
-import { CreateProviderDTO } from "../dtos/Providers/CreateProviderDTO";
+import { ProviderRequestDTO } from "../dtos/Providers/ProviderRequestDTO";
 import { Provider } from "../models/Provider";
-import { UpdateProviderDTO } from "../dtos/Providers/UpdateProviderDTO";
 
 interface Props {
   isOpen: boolean;
@@ -53,7 +52,7 @@ export default function CreateEditProviderModal({
   const handleCreate = async (onClose: () => void) => {
     setIsSubmitting(true);
     try {
-      const dto: CreateProviderDTO = {
+      const dto: ProviderRequestDTO = {
         name: formData.name,
         email: formData.email,
         phoneNumber: formData.phoneNumber,
@@ -74,7 +73,7 @@ export default function CreateEditProviderModal({
 
     try {
       if (providerToEdit?.id) {
-        const dto: UpdateProviderDTO = {
+        const dto: ProviderRequestDTO = {
           name: formData.name,
           email: formData.email,
           phoneNumber: formData.phoneNumber,

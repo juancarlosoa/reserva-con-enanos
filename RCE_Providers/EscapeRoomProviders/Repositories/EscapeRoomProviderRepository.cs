@@ -51,7 +51,6 @@ public class EscapeRoomProviderRepository : IEscapeRoomProviderRepository
 
         _context.EscapeRoomProviders.Update(provider);
     }
-
     public async Task<IEnumerable<Room>> GetRoomsByProviderIdAsync(Guid id)
     {
         return await _context.Rooms.Where(r => r.ProviderId == id).ToListAsync();

@@ -9,7 +9,6 @@ namespace RCE_Providers.Rooms.Controllers
     public class RoomController : ControllerBase
     {
         private readonly IRoomService _roomService;
-
         public RoomController(IRoomService service)
         {
             _roomService = service;
@@ -35,17 +34,19 @@ namespace RCE_Providers.Rooms.Controllers
                 );
         }
 
-        [HttpPut]
-        public async Task<ActionResult<RoomResponseDTO>> UpdateRoom([FromBody] RoomRequestDTO dto)
+        [HttpPut("{providerId}")]
+        public async Task<ActionResult<RoomResponseDTO>> UpdateProvider(Guid providerId, [FromBody] RoomRequestDTO dto)
         {
-            var updatedRoom = await _roomService.UpdateRoomAsync(dto);
-            return Ok(updatedRoom);
+            var result = await _roomService.UpdateRoomAsync(providerId, dto);
+            if (!result) return NotFound();
+
+            return Ok();
         }
 
-        [HttpDelete("{roomId}")]
-        public async Task<IActionResult> DeleteRoom(Guid roomId)
+        [HttpDelete("{providerId}")]
+        public async Task<IActionResult> DeleteProvider(Guid providerId)
         {
-            var success = await _roomService.DeleteRoom(roomId);
+            var success = await _roomService.DeleteRoomAsync(providerId);
             if (!success) return NotFound();
 
             return Ok();

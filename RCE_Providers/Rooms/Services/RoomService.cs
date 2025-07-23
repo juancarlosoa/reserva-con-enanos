@@ -32,20 +32,37 @@ public class RoomService : IRoomService
         return _mapper.Map<RoomResponseDTO>(room);
     }
 
-    public async Task<RoomResponseDTO> UpdateRoomAsync(RoomRequestDTO dto)
+    public async Task<bool> UpdateRoomAsync(Guid providerId, RoomRequestDTO dto)
     {
-        var room = _mapper.Map<Room>(dto);
-        _repository.UpdateAsync(room);
-        await _repository.SaveChangesAsync();
+        var room = await _repository.GetByIdAsync(providerId);
+        if (room == null) return false;
+        try
+        {
+            _repository.Update(_mapper.Map(dto, room));
+            await _repository.SaveChangesAsync();
 
-        return _mapper.Map<RoomResponseDTO>(room);
+            return true;
+        }
+        catch
+        {
+            throw;
+        }
     }
 
-    public async Task<bool> DeleteRoom(Guid id)
+    public async Task<bool> DeleteRoomAsync(Guid roomId)
     {
-        var deleted = await _repository.DeleteAsync(id);
-        if (deleted) await _repository.SaveChangesAsync();
+        var room = await _repository.GetByIdAsync(roomId);
+        if (room == null) return false;
+        try
+        {
+            _repository.Delete(room);
+            await _repository.SaveChangesAsync();
 
-        return deleted;
+            return true;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 }

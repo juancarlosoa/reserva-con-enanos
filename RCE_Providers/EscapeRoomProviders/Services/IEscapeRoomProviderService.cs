@@ -7,8 +7,8 @@ public interface IEscapeRoomProviderService
 {
     Task<IEnumerable<EscapeRoomProviderResponseDTO>> GetAllProviders();
     Task<EscapeRoomProviderResponseDTO?> GetProviderByIdAsync(Guid providerId);
-    Task<EscapeRoomProviderResponseDTO> CreateProviderAsync(EscapeRoomProviderCreateDTO dto);
-    Task<bool> UpdateProviderAsync(Guid providerId, EscapeRoomProviderUpdateDTO dto);
-    Task<bool> DeleteProvider(Guid providerId);
+    Task<EscapeRoomProviderResponseDTO> CreateProviderAsync(EscapeRoomProviderRequestDTO dto);
+    Task<bool> UpdateProviderAsync(Guid providerId, EscapeRoomProviderRequestDTO dto);
+    Task<bool> DeleteProviderAsync(Guid providerId);
     Task<IEnumerable<RoomResponseDTO>> GetRoomsByProviderIdAsync(Guid providerId);
 }

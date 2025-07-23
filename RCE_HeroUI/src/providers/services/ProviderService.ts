@@ -1,5 +1,4 @@
-import { CreateProviderDTO } from "../dtos/Providers/CreateProviderDTO";
-import { UpdateProviderDTO } from "../dtos/Providers/UpdateProviderDTO";
+import { ProviderRequestDTO } from "../dtos/Providers/ProviderRequestDTO";
 import { Provider } from "../models/Provider";
 import { providerRepository } from "../repositories/ProviderRepository";
 
@@ -11,7 +10,7 @@ export const ProviderService = {
         return dtos.map(dto => new Provider(dto));
     },
 
-    createProvider: async (data: CreateProviderDTO): Promise<Provider> => {
+    createProvider: async (data: ProviderRequestDTO): Promise<Provider> => {
         const dto = await providerRepository.createProvider(data);
 
         return new Provider(dto);
@@ -23,7 +22,7 @@ export const ProviderService = {
         return new Provider(dto);
     },
 
-    updateProvider:  async (providerId: string, data: UpdateProviderDTO): Promise<Provider> => {
+    updateProvider:  async (providerId: string, data: ProviderRequestDTO): Promise<Provider> => {
         const dto = await providerRepository.updateProvider(providerId, data);
 
         return new Provider(dto);

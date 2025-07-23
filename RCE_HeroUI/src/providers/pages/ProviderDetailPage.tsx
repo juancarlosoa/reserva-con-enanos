@@ -4,15 +4,16 @@ import { useEffect, useState } from "react";
 import { ProviderService } from "../services/ProviderService";
 import { Room } from "../../rooms/models/Room";
 import CreateRoomModal from "../../rooms/components/CreateRoomModal";
-import { Button } from "@heroui/react";
-import { Card } from "@heroui/react";
+import { Button, useDisclosure } from "@heroui/react";
+import { RoomCard } from "../../rooms/components/RoomCard";
 
 export const ProviderDetail = () => {
   const { name } = useParams();
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [roomToEdit, setRoomToEdit] = useState<Room | null>(null);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -32,6 +33,26 @@ export const ProviderDetail = () => {
     if (name) fetchRooms();
   }, [name]);
 
+  const openEditModal = (room: Room) => {
+    setRoomToEdit(room);
+    onOpen();
+  };
+  const openCreateModal = () => {
+    setRoomToEdit(null);
+    onOpen();
+  };
+
+  const refreshRooms = async () => {
+    try {
+      setLoading(true);
+      //const data = await ProviderService.getProviders();
+      // setRooms(data);
+    } catch (error) {
+      console.error("Error al refrescar providers:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <DefaultLayout>
       <div className="p-6 max-w-6xl mx-auto">
@@ -48,7 +69,7 @@ export const ProviderDetail = () => {
             color="primary"
             variant="solid"
             className="font-semibold px-6 py-2 rounded-lg shadow"
-            onPress={() => setIsModalOpen(true)}
+            onPress={openCreateModal}
           >
             Crear sala
           </Button>
@@ -66,49 +87,15 @@ export const ProviderDetail = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
             {rooms.map((room) => (
-              <Card
-                key={room.id}
-                className="p-0 flex flex-col items-center shadow-lg border border-gray-200 hover:shadow-xl transition-shadow bg-white rounded-xl overflow-hidden"
-              >
-                {/* Imagen superior */}
-                <div className="w-full">
-                  {room.imageUrl ? (
-                    <img
-                      src={room.imageUrl}
-                      alt={room.name}
-                      className="w-full h-40 object-cover rounded-t-xl"
-                    />
-                  ) : (
-                    <div className="w-full h-40 bg-gradient-to-br from-blue-100 to-gray-100 rounded-t-xl flex items-center justify-center text-blue-400 text-2xl">
-                      <span>🏠</span>
-                    </div>
-                  )}
-                </div>
-                {/* Info de la sala */}
-                <div className="w-full px-6 py-4 flex flex-col items-center">
-                  <h3 className="text-lg font-bold mb-2 text-center text-blue-700">
-                    {room.name}
-                  </h3>
-                  {room.description && (
-                    <p className="text-gray-500 mb-2 text-center">
-                      {room.description}
-                    </p>
-                  )}
-                  {room.capacity && (
-                    <span className="text-sm text-blue-500 font-medium">
-                      Capacidad: {room.capacity}
-                    </span>
-                  )}
-                </div>
-              </Card>
+              <RoomCard key={room.id} room={room} onEdit={openEditModal} />
             ))}
           </div>
         )}
         <CreateRoomModal
-          isOpen={isModalOpen}
-          onOpenChange={setIsModalOpen}
-          onFinish={(newRoom) => setRooms((prev) => [...prev, newRoom])}
-          providerId={name || ""}
+          isOpen={isOpen}
+          onOpenChange={onOpenChange}
+          onFinish={refreshRooms}
+          roomToEdit={roomToEdit}
         />
       </div>
     </DefaultLayout>

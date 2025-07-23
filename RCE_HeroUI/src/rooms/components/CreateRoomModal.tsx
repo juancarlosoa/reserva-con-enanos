@@ -3,79 +3,107 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   Button,
   Input,
   Form,
 } from "@heroui/react";
 import { useState } from "react";
 import { Room } from "../models/Room";
+import { RoomRequestDTO } from "../dtos/RoomRequestDTO";
 
 interface Props {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onFinish: (room: Room) => void;
-  providerId: string;
+  onFinish: () => void;
+  roomToEdit: Room | null;
 }
 
 export default function CreateRoomModal({
   isOpen,
   onOpenChange,
   onFinish,
-  providerId,
+  roomToEdit,
 }: Props) {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    capacity: "",
-    imageUrl: "",
+    theme: "",
+    minPlayers: "",
+    maxPlayers: "",
+    durationMinutes: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [formErrors, setFormErrors] = useState({
-    name: "",
-    capacity: "",
-  });
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    setFormErrors((prev) => ({ ...prev, [field]: "" }));
+  };
+  const handleCreate = async (onClose: () => void) => {
+    setIsSubmitting(true);
+    try {
+      const dto: RoomRequestDTO = {
+        providerId: "",
+        name: formData.name,
+        description: formData.description,
+        theme: formData.theme,
+        minPlayers: Number(formData.minPlayers),
+        maxPlayers: Number(formData.maxPlayers),
+        durationMinutes: Number(formData.durationMinutes),
+      };
+      // await ProviderService.createProvider(dto);
+      onClose();
+      setFormData({
+        name: "",
+        description: "",
+        theme: "",
+        minPlayers: "",
+        maxPlayers: "",
+        durationMinutes: "",
+      });
+      onFinish();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const validateForm = () => {
-    const errors: any = {};
-    if (!formData.name.trim()) errors.name = "El nombre es obligatorio.";
-    if (formData.capacity && isNaN(Number(formData.capacity)))
-      errors.capacity = "La capacidad debe ser un número.";
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
+  const handleEdit = async (onClose: () => void) => {
+    setIsSubmitting(true);
+    try {
+      if (roomToEdit?.id) {
+        const dto: RoomRequestDTO = {
+          providerId: "",
+          name: formData.name,
+          description: formData.description,
+          theme: formData.theme,
+          minPlayers: Number(formData.minPlayers),
+          maxPlayers: Number(formData.maxPlayers),
+          durationMinutes: Number(formData.durationMinutes),
+        };
+        // await ProviderService.updateProvider(providerToEdit.id, dto);
+        onClose();
+        setFormData({
+          name: "",
+          description: "",
+          theme: "",
+          minPlayers: "",
+          maxPlayers: "",
+          durationMinutes: "",
+        });
+        onFinish();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const onSubmit = async (onClose: () => void) => {
-    if (!validateForm()) {
-      setError("Corrige los errores antes de continuar.");
-      return;
-    }
-    setIsSubmitting(true);
-    setError(null);
-    try {
-      // Aquí iría la llamada a la API para crear la sala
-      // Ejemplo: await RoomService.createRoom(providerId, formData)
-      // Simulación:
-      const newRoom: Room = {
-        id: Math.random().toString(36).substring(2),
-        name: formData.name,
-        description: formData.description,
-        capacity: Number(formData.capacity),
-        imageUrl: formData.imageUrl,
-      };
-      onFinish(newRoom);
-      onClose();
-      setFormData({ name: "", description: "", capacity: "", imageUrl: "" });
-    } catch (err) {
-      setError("Hubo un error al crear la sala.");
-    } finally {
-      setIsSubmitting(false);
+    if (roomToEdit) {
+      await handleEdit(onClose);
+    } else {
+      await handleCreate(onClose);
     }
   };
 
@@ -101,7 +129,6 @@ export default function CreateRoomModal({
                   value={formData.name}
                   isRequired
                   onValueChange={(val) => handleChange("name", val)}
-                  errorMessage={formErrors.name}
                 />
                 <Input
                   label="Descripción"
@@ -111,36 +138,61 @@ export default function CreateRoomModal({
                   onValueChange={(val) => handleChange("description", val)}
                 />
                 <Input
-                  label="Capacidad"
-                  placeholder="Capacidad"
+                  label="Temática"
+                  placeholder="Temática de la sala"
+                  variant="bordered"
+                  value={formData.theme}
+                  onValueChange={(val) => handleChange("theme", val)}
+                />
+                <div className="flex gap-4">
+                  <Input
+                    label="Mín. jugadores"
+                    placeholder="Mínimo"
+                    type="number"
+                    variant="bordered"
+                    value={formData.minPlayers}
+                    min={0}
+                    onValueChange={(val) => handleChange("minPlayers", val)}
+                  />
+                  <Input
+                    label="Máx. jugadores"
+                    placeholder="Máximo"
+                    type="number"
+                    variant="bordered"
+                    value={formData.maxPlayers}
+                    onValueChange={(val) => handleChange("maxPlayers", val)}
+                  />
+                </div>
+                <Input
+                  label="Duración (min)"
+                  placeholder="Duración en minutos"
                   type="number"
                   variant="bordered"
-                  value={formData.capacity}
-                  onValueChange={(val) => handleChange("capacity", val)}
-                  errorMessage={formErrors.capacity}
+                  value={formData.durationMinutes}
+                  min={0}
+                  onValueChange={(val) => handleChange("durationMinutes", val)}
                 />
-                <Input
-                  label="Imagen (URL)"
-                  placeholder="URL de la imagen"
-                  variant="bordered"
-                  value={formData.imageUrl}
-                  onValueChange={(val) => handleChange("imageUrl", val)}
-                />
-                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+                {/* Campo de imagen eliminado porque Room no tiene imageUrl */}
+                <div className="flex gap-2 mt-4 justify-end">
+                  <Button
+                    color="danger"
+                    variant="flat"
+                    type="reset"
+                    onPress={onClose}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    type="submit"
+                    color="primary"
+                    isLoading={isSubmitting}
+                    onPress={() => onSubmit(onClose)}
+                  >
+                    Crear
+                  </Button>
+                </div>
               </Form>
             </ModalBody>
-            <ModalFooter>
-              <Button color="danger" variant="flat" onPress={onClose}>
-                Cancelar
-              </Button>
-              <Button
-                color="primary"
-                isLoading={isSubmitting}
-                onPress={() => onSubmit(onClose)}
-              >
-                Crear
-              </Button>
-            </ModalFooter>
           </>
         )}
       </ModalContent>

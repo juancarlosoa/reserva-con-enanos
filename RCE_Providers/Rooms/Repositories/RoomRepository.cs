@@ -6,39 +6,37 @@ namespace RCE_Providers.Rooms.Repositories;
 public class RoomRepository : IRoomRepository
 {
     private readonly ProvidersDbContext _context;
-
     public RoomRepository(ProvidersDbContext context)
     {
         _context = context;
     }
-
     public async Task<Room> AddAsync(Room room)
     {
         await _context.Rooms.AddAsync(room);
         return room;
     }
-
-    public async Task<bool> DeleteAsync(Guid id)
+    public void Delete(Room room)
     {
-        var room = await _context.Rooms.FindAsync(id);
-        if (room == null) return false;
+        if (room == null)
+        {
+            throw new ArgumentNullException(nameof(room), "Room cannot be null.");
+        }
 
         _context.Rooms.Remove(room);
-
-        return true;
     }
-
     public async Task<Room?> GetByIdAsync(Guid id)
     {
         return await _context.Rooms.FindAsync(id);
     }
-
-    public Room UpdateAsync(Room room)
+    public void Update(Room room)
     {
-        _context.Rooms.Update(room);
-        return room;
-    }
+        if (room == null)
+        {
+            throw new ArgumentNullException(nameof(room), "Room cannot be null.");
+        }
 
+        _context.Rooms.Update(room);
+    }
     public async Task SaveChangesAsync()
     {
         await _context.SaveChangesAsync();

@@ -1,8 +1,7 @@
-import { CreateProviderDTO } from "@/providers/dtos/Providers/CreateProviderDTO";
+import { ProviderRequestDTO } from "@/providers/dtos/Providers/ProviderRequestDTO";
 import { REPOSITORY_HOSTS } from "../../api/repositoryHosts";
 import { apiAdapter } from "@/api";
 import { ProviderResponseDTO } from "../dtos/Providers/ProviderResponseDTO";
-import { UpdateProviderDTO } from "../dtos/Providers/UpdateProviderDTO";
 
 export const providerRepository = {
 
@@ -10,7 +9,7 @@ export const providerRepository = {
         return apiAdapter.get<ProviderResponseDTO[]>(`${REPOSITORY_HOSTS.PROVIDERS}`);
     },
 
-    createProvider: async (data: CreateProviderDTO) => {
+    createProvider: async (data: ProviderRequestDTO) => {
         return apiAdapter.post<ProviderResponseDTO>(`${REPOSITORY_HOSTS.PROVIDERS}`, data)
     },
 
@@ -18,7 +17,7 @@ export const providerRepository = {
         return apiAdapter.delete(`${REPOSITORY_HOSTS.PROVIDERS}/${providerId}`);
     },
 
-    updateProvider: async (providerId: string, data: UpdateProviderDTO) => {
+    updateProvider: async (providerId: string, data: ProviderRequestDTO) => {
         return apiAdapter.put<ProviderResponseDTO>(`${REPOSITORY_HOSTS.PROVIDERS}/${providerId}`, data);
     },
 

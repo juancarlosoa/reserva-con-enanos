@@ -9,5 +9,6 @@ public class RoomResponseDTO
     public string Theme { get; set; } = string.Empty;
     public required int MinPlayers { get; set; }
     public required int MaxPlayers { get; set; }
-    public int DurationMinutes { get; set; } = 0;
+    public DateTime CreatedAt { get; set; }
+    public int DurationMinutes { get; set; }
 }

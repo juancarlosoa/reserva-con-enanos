@@ -8,8 +8,7 @@ public class EscapeRoomProviderProfile : Profile
 {
     public EscapeRoomProviderProfile()
     {
-        CreateMap<EscapeRoomProviderCreateDTO, EscapeRoomProvider>();
+        CreateMap<EscapeRoomProviderRequestDTO, EscapeRoomProvider>();
         CreateMap<EscapeRoomProvider, EscapeRoomProviderResponseDTO>();
-        CreateMap<EscapeRoomProviderUpdateDTO, EscapeRoomProvider>();
     }
 }

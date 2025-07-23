@@ -6,6 +6,6 @@ public interface IRoomService
 {
     Task<RoomResponseDTO?> GetRoomByIdAsync(Guid roomId);
     Task<RoomResponseDTO> CreateRoomAsync(RoomRequestDTO dto);
-    Task<RoomResponseDTO> UpdateRoomAsync(RoomRequestDTO dto);
-    Task<bool> DeleteRoom(Guid roomId);
+    Task<bool> UpdateRoomAsync(Guid providerId, RoomRequestDTO dto);
+    Task<bool> DeleteRoomAsync(Guid providerId);
 }

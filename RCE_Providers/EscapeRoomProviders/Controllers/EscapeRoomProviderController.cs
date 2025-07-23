@@ -33,7 +33,7 @@ namespace RCE_Providers.EscapeRoomProviders.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<EscapeRoomProviderResponseDTO>> CreateProvider([FromBody] EscapeRoomProviderCreateDTO dto)
+        public async Task<ActionResult<EscapeRoomProviderResponseDTO>> CreateProvider([FromBody] EscapeRoomProviderRequestDTO dto)
         {
             var created = await _providerService.CreateProviderAsync(dto);
             return CreatedAtAction(
@@ -44,7 +44,7 @@ namespace RCE_Providers.EscapeRoomProviders.Controllers
         }
 
         [HttpPut("{providerId}")]
-        public async Task<ActionResult<EscapeRoomProviderResponseDTO>> UpdateProvider(Guid providerId, [FromBody] EscapeRoomProviderUpdateDTO dto)
+        public async Task<ActionResult<EscapeRoomProviderResponseDTO>> UpdateProvider(Guid providerId, [FromBody] EscapeRoomProviderRequestDTO dto)
         {
             var result = await _providerService.UpdateProviderAsync(providerId, dto);
             if (!result) return NotFound();
@@ -55,7 +55,7 @@ namespace RCE_Providers.EscapeRoomProviders.Controllers
         [HttpDelete("{providerId}")]
         public async Task<IActionResult> DeleteProvider(Guid providerId)
         {
-            var success = await _providerService.DeleteProvider(providerId);
+            var success = await _providerService.DeleteProviderAsync(providerId);
             if (!success) return NotFound();
 
             return Ok();
