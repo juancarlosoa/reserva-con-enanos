@@ -4,12 +4,12 @@ export class Room {
   id: string;
   providerId: string;
   name: string;
-  description?: string;
-  theme?: string;
+  description: string;
+  theme: string;
   minPlayers: number;
   maxPlayers: number;
-  durationMinutes?: number;
-  createdAt?: string;
+  durationMinutes: number;
+  createdAt: string;
 
   constructor(dto: RoomResponseDTO) {
     this.id = dto.id;

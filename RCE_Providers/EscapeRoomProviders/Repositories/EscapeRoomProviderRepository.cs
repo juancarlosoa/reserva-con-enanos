@@ -39,7 +39,9 @@ public class EscapeRoomProviderRepository : IEscapeRoomProviderRepository
 
     public async Task<EscapeRoomProvider?> GetByIdAsync(Guid id)
     {
-        return await _context.EscapeRoomProviders.FindAsync(id);
+        return await _context.EscapeRoomProviders
+             .Include(p => p.Rooms.OrderBy(r => r.CreatedAt).Take(5))
+             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
     public void Update(EscapeRoomProvider provider)

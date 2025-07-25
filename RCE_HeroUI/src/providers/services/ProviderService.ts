@@ -1,3 +1,4 @@
+import { Room } from "@/rooms/models/Room";
 import { ProviderRequestDTO } from "../dtos/Providers/ProviderRequestDTO";
 import { Provider } from "../models/Provider";
 import { providerRepository } from "../repositories/ProviderRepository";
@@ -8,6 +9,12 @@ export const ProviderService = {
         const dtos = await providerRepository.getProviders();
 
         return dtos.map(dto => new Provider(dto));
+    },
+
+    getProviderById: async (providerId: string): Promise<Provider> => {
+        const dto = await providerRepository.getProviderById(providerId);
+
+        return new Provider(dto);
     },
 
     createProvider: async (data: ProviderRequestDTO): Promise<Provider> => {
@@ -27,11 +34,10 @@ export const ProviderService = {
 
         return new Provider(dto);
     },
+    
+    getProviderRooms: async (providerId: string): Promise<Room[]> => {
+        const dtos = await providerRepository.getProviderRooms(providerId);
 
-    getProviderRooms: async (providerId: string): Promise<Provider> => {
-        const dto = await providerRepository.getProviderRooms(providerId);
-
-        return new Provider(dto);
+        return dtos.map(dto => new Room(dto));
     },
-
 };

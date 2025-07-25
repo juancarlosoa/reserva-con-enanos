@@ -42,7 +42,7 @@ export const ProviderCard = ({ provider, onEdit }: Props) => {
         />
       </CardHeader>
       <CardBody className="pt-4 px-6 flex flex-col items-center">
-        <h3 className="text-lg font-bold text-blue-700 mb-2 truncate">
+        <h3 className="text-lg font-bold text-green-700 mb-2 truncate">
           {provider.name}
         </h3>
         <div className="space-y-1 text-sm text-gray-600 w-full">
@@ -60,7 +60,7 @@ export const ProviderCard = ({ provider, onEdit }: Props) => {
         <Button
           color="primary"
           size="md"
-          variant="flat"
+          variant="ghost"
           className="px-6 py-3 text-base"
           onPress={handleEdit}
         >

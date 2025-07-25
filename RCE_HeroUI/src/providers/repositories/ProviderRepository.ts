@@ -2,11 +2,16 @@ import { ProviderRequestDTO } from "@/providers/dtos/Providers/ProviderRequestDT
 import { REPOSITORY_HOSTS } from "../../api/repositoryHosts";
 import { apiAdapter } from "@/api";
 import { ProviderResponseDTO } from "../dtos/Providers/ProviderResponseDTO";
+import { Room } from "@/rooms/models/Room";
 
 export const providerRepository = {
 
     getProviders: async () => {
         return apiAdapter.get<ProviderResponseDTO[]>(`${REPOSITORY_HOSTS.PROVIDERS}`);
+    },
+    
+    getProviderById: async (providerId: string) => {
+        return apiAdapter.get<ProviderResponseDTO>(`${REPOSITORY_HOSTS.PROVIDERS}/${providerId}`);
     },
 
     createProvider: async (data: ProviderRequestDTO) => {
@@ -22,6 +27,6 @@ export const providerRepository = {
     },
 
     getProviderRooms: async (providerId: string) => {
-        return apiAdapter.get(`${REPOSITORY_HOSTS.PROVIDERS}/${providerId}/rooms`);
+        return apiAdapter.get<Room[]>(`${REPOSITORY_HOSTS.PROVIDERS}/${providerId}/rooms`);
     }
 };

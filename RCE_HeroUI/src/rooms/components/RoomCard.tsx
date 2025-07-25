@@ -27,11 +27,14 @@ export const RoomCard = ({ room, onEdit }: Props) => {
     onEdit(room);
   };
   return (
-    <Card key={room.id} className="hover:shadow-xl max-w-xs flex flex-col">
+    <Card
+      key={room.id}
+      className="hover:shadow-xl max-w-xs flex flex-col border border-green-100"
+    >
       <CardHeader className="pb-0 p-0">
         <Image
           radius="none"
-          src="/public/images/providers.jpg"
+          src="/public/images/rooms.jpg"
           alt={room.name}
           className="w-full h-32 object-cover rounded-t-xl"
         />
@@ -39,7 +42,7 @@ export const RoomCard = ({ room, onEdit }: Props) => {
       <CardBody className="pt-4 px-6 flex flex-col items-center">
         {/* Info de la sala */}
         <div className="w-full px-6 py-4 flex flex-col items-center">
-          <h3 className="text-lg font-bold mb-2 text-center text-blue-700">
+          <h3 className="text-lg font-bold mb-2 text-center text-green-700">
             {room.name}
           </h3>
           {room.description && (
@@ -47,23 +50,23 @@ export const RoomCard = ({ room, onEdit }: Props) => {
           )}
           <div className="flex flex-wrap gap-2 justify-center mb-2">
             {room.theme && (
-              <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-medium">
+              <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-medium">
                 {room.theme}
               </span>
             )}
             {room.durationMinutes && (
-              <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium">
+              <span className="px-2 py-1 rounded text-xs font-medium">
                 {room.durationMinutes} min
               </span>
             )}
           </div>
           <div className="flex gap-4 text-sm text-gray-600 mb-2">
-            <span>
+            <span className="font-semibold">
               👥 {room.minPlayers} - {room.maxPlayers} jugadores
             </span>
           </div>
           {room.createdAt && (
-            <span className="text-xs text-gray-400">
+            <span className="text-xs">
               Creada: {new Date(room.createdAt).toLocaleDateString()}
             </span>
           )}
@@ -73,7 +76,7 @@ export const RoomCard = ({ room, onEdit }: Props) => {
         <Button
           color="primary"
           size="md"
-          variant="flat"
+          variant="ghost"
           className="px-6 py-3 text-base"
           onPress={handleEdit}
         >

@@ -1,14 +1,15 @@
-import DefaultLayout from "@/layouts/default";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ProviderService } from "../services/ProviderService";
 import { Room } from "../../rooms/models/Room";
-import CreateRoomModal from "../../rooms/components/CreateRoomModal";
+import CreateEditRoomModal from "../../rooms/components/CreateEditRoomModal";
 import { Button, useDisclosure } from "@heroui/react";
 import { RoomCard } from "../../rooms/components/RoomCard";
+import { Icon } from "@iconify-icon/react";
 
 export const ProviderDetail = () => {
-  const { name } = useParams();
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,18 +21,17 @@ export const ProviderDetail = () => {
       setLoading(true);
       setError(null);
       try {
-        // name es el id del provider
-        const res = await ProviderService.getProviderRooms(name!);
-        // Si la respuesta es un Provider con rooms, ajusta aquí
+        const res = await ProviderService.getProviderById(id!);
         setRooms(res.rooms || []);
+        console.log(res.rooms);
       } catch (err) {
         setError("No se pudieron cargar las salas");
       } finally {
         setLoading(false);
       }
     };
-    if (name) fetchRooms();
-  }, [name]);
+    if (id) fetchRooms();
+  }, [id]);
 
   const openEditModal = (room: Room) => {
     setRoomToEdit(room);
@@ -45,8 +45,8 @@ export const ProviderDetail = () => {
   const refreshRooms = async () => {
     try {
       setLoading(true);
-      //const data = await ProviderService.getProviders();
-      // setRooms(data);
+      const data = await ProviderService.getProviderRooms(id!);
+      setRooms(data);
     } catch (error) {
       console.error("Error al refrescar providers:", error);
     } finally {
@@ -54,50 +54,85 @@ export const ProviderDetail = () => {
     }
   };
   return (
-    <DefaultLayout>
-      <div className="p-6 max-w-6xl mx-auto">
+    <main>
+      <div className="max-w-6xl mx-auto p-4 sm:p-6">
+        <div className="mb-6 flex items-center gap-2">
+          <Button
+            variant="flat"
+            color="success"
+            className="flex items-center gap-2 px-4 py-2"
+            onPress={() => navigate("/providers")}
+          >
+            <Icon icon="heroicons:arrow-left" width="20" height="20" />
+            Volver a proveedores
+          </Button>
+        </div>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
           <div>
-            <h2 className="text-3xl font-bold text-blue-700 mb-2">
-              Salas del proveedor
-            </h2>
-            <p className="text-gray-500 text-base">
-              ID: <span className="font-mono text-blue-500">{name}</span>
-            </p>
+            <h1 className="text-3xl font-bold text-green-700 mb-2">
+              Salas de la empresa
+            </h1>
           </div>
           <Button
-            color="primary"
+            color="success"
             variant="solid"
             className="font-semibold px-6 py-2 rounded-lg shadow"
             onPress={openCreateModal}
           >
-            Crear sala
+            <Icon
+              icon="heroicons:plus-circle"
+              width="24"
+              height="24"
+              className="mr-2 text-green-700"
+            />
+            Crear nueva sala
           </Button>
         </div>
         {loading ? (
-          <div className="text-center py-10 text-lg text-gray-400">
+          <div className="flex flex-col items-center justify-center py-16 text-lg text-green-400">
+            <Icon
+              icon="heroicons:arrow-path"
+              width="40"
+              height="40"
+              className="animate-spin mb-2 text-green-500"
+            />
             Cargando salas...
           </div>
         ) : error ? (
-          <div className="text-center py-10 text-red-500">{error}</div>
+          <div className="flex flex-col items-center justify-center py-16">
+            <Icon
+              icon="heroicons:exclamation-triangle"
+              width="40"
+              height="40"
+              className="mb-2 text-green-500"
+            />
+            {error}
+          </div>
         ) : rooms.length === 0 ? (
-          <div className="text-center py-10 text-gray-400">
+          <div className="flex flex-col items-center justify-center py-16 text-lg text-green-400">
+            <Icon
+              icon="heroicons:home-modern"
+              width="40"
+              height="40"
+              className="mb-2 text-green-500"
+            />
             No hay salas para este proveedor.
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          <div className="flex gap-8 mt-8">
             {rooms.map((room) => (
               <RoomCard key={room.id} room={room} onEdit={openEditModal} />
             ))}
           </div>
         )}
-        <CreateRoomModal
+        <CreateEditRoomModal
           isOpen={isOpen}
           onOpenChange={onOpenChange}
           onFinish={refreshRooms}
           roomToEdit={roomToEdit}
+          providerId={id!}
         />
       </div>
-    </DefaultLayout>
+    </main>
   );
 };

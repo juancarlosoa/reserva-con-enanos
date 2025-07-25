@@ -7,22 +7,25 @@ import {
   Input,
   Form,
 } from "@heroui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Room } from "../models/Room";
 import { RoomRequestDTO } from "../dtos/RoomRequestDTO";
+import { RoomService } from "../services/RoomService";
 
 interface Props {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onFinish: () => void;
   roomToEdit: Room | null;
+  providerId: string;
 }
 
-export default function CreateRoomModal({
+export default function CreateEditRoomModal({
   isOpen,
   onOpenChange,
   onFinish,
   roomToEdit,
+  providerId,
 }: Props) {
   const [formData, setFormData] = useState({
     name: "",
@@ -32,6 +35,29 @@ export default function CreateRoomModal({
     maxPlayers: "",
     durationMinutes: "",
   });
+
+  useEffect(() => {
+    if (roomToEdit) {
+      setFormData({
+        name: roomToEdit.name,
+        description: roomToEdit.description,
+        theme: roomToEdit.theme,
+        minPlayers: roomToEdit.minPlayers.toString(),
+        maxPlayers: roomToEdit.maxPlayers.toString(),
+        durationMinutes: roomToEdit.durationMinutes.toString(),
+      });
+    } else {
+      setFormData({
+        name: "",
+        description: "",
+        theme: "",
+        minPlayers: "",
+        maxPlayers: "",
+        durationMinutes: "",
+      });
+    }
+  }, [roomToEdit]);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (field: string, value: string) => {
@@ -41,7 +67,7 @@ export default function CreateRoomModal({
     setIsSubmitting(true);
     try {
       const dto: RoomRequestDTO = {
-        providerId: "",
+        providerId: providerId,
         name: formData.name,
         description: formData.description,
         theme: formData.theme,
@@ -49,7 +75,8 @@ export default function CreateRoomModal({
         maxPlayers: Number(formData.maxPlayers),
         durationMinutes: Number(formData.durationMinutes),
       };
-      // await ProviderService.createProvider(dto);
+      console.log(dto);
+      await RoomService.createRoom(dto);
       onClose();
       setFormData({
         name: "",
@@ -72,7 +99,7 @@ export default function CreateRoomModal({
     try {
       if (roomToEdit?.id) {
         const dto: RoomRequestDTO = {
-          providerId: "",
+          providerId: roomToEdit.providerId,
           name: formData.name,
           description: formData.description,
           theme: formData.theme,
@@ -80,7 +107,7 @@ export default function CreateRoomModal({
           maxPlayers: Number(formData.maxPlayers),
           durationMinutes: Number(formData.durationMinutes),
         };
-        // await ProviderService.updateProvider(providerToEdit.id, dto);
+        await RoomService.updateRoom(roomToEdit.id, dto);
         onClose();
         setFormData({
           name: "",
@@ -184,7 +211,7 @@ export default function CreateRoomModal({
                   </Button>
                   <Button
                     type="submit"
-                    color="primary"
+                  color="success"
                     isLoading={isSubmitting}
                     onPress={() => onSubmit(onClose)}
                   >

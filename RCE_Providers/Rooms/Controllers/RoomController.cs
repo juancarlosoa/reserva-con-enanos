@@ -4,7 +4,7 @@ using RCE_Providers.Rooms.Services;
 
 namespace RCE_Providers.Rooms.Controllers
 {
-    [Route("rooms")]
+    [Route("providers/rooms")]
     [ApiController]
     public class RoomController : ControllerBase
     {

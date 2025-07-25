@@ -107,12 +107,12 @@ export default function CreateEditProviderModal({
     >
       <ModalContent>
         {(onClose) => (
-          <div className="bg-gradient-to-br from-blue-50 to-white rounded-xl p-6 w-full max-w-md mx-auto">
+          <div className="bg-gradient-to-br from-green-50 to-white rounded-xl p-6 w-full max-w-md mx-auto">
             <ModalHeader className="flex flex-col gap-2 items-center mb-2">
-              <span className="text-4xl text-blue-600">
+              <span className="text-4xl text-green-600">
                 {providerToEdit ? "✏️" : "➕"}
               </span>
-              <span className="text-2xl font-bold text-blue-700">
+              <span className="text-2xl font-bold text-green-700">
                 {providerToEdit ? "Editar proveedor" : "Crear nuevo proveedor"}
               </span>
             </ModalHeader>
@@ -157,7 +157,7 @@ export default function CreateEditProviderModal({
                     Cancelar
                   </Button>
                   <Button
-                    color="primary"
+                    color="success"
                     type="submit"
                     isLoading={isSubmitting}
                   >

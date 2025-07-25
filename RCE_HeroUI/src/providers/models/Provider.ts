@@ -1,5 +1,6 @@
 import { ProviderResponseDTO } from "../dtos/Providers/ProviderResponseDTO";
 import { Room } from "../../rooms/models/Room";
+import { RoomResponseDTO } from "../../rooms/dtos/RoomResponseDTO";
 
 export class Provider {
     id: string;
@@ -15,6 +16,6 @@ export class Provider {
         this.email = dto.email;
         this.phoneNumber = dto.phoneNumber;
         this.createdAt = dto.createdAt;
-        this.rooms = [];
+        this.rooms = (dto.rooms ?? []).map((roomDto: RoomResponseDTO) => new Room(roomDto));
     }
 }
