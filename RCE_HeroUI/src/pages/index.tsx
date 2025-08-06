@@ -34,16 +34,6 @@ export default function IndexPage() {
               <Icon icon="heroicons:users" width="28" height="28" />
               Gestionar proveedores
             </Button>
-            <Button
-              as={Link}
-              to="/dashboard"
-              color="success"
-              variant="flat"
-              className="w-full flex items-center gap-2 px-8 py-4 text-lg font-semibold text-green-700 hover:text-green-900"
-            >
-              <Icon icon="heroicons:home" width="28" height="28" />
-              Ir al dashboard
-            </Button>
           </div>
         </div>
       </section>

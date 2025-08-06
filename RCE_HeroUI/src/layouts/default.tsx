@@ -1,137 +1,238 @@
-import React from "react";
+// Layout.tsx
+import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
-  NavbarMenuToggle,
-  NavbarMenu,
-  NavbarMenuItem,
-  Link,
   Button,
+  Avatar,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  Tooltip,
 } from "@heroui/react";
 import { Icon } from "@iconify-icon/react";
-import { Outlet } from "react-router-dom";
 
-export default function DefaultLayout() {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const [sidebarOpen, setSidebarOpen] = React.useState(true);
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const getCurrentPage = () => {
+    const path = location.pathname.split("/")[1] || "";
+    return path;
+  };
+
+  const activeMenuItem = getCurrentPage();
+
+  const user = {
+    name: "Juan Pérez",
+    email: "juan@ejemplo.com",
+    avatar: "https://i.pravatar.cc/40?u=juan@ejemplo.com",
+  };
 
   const menuItems = [
-    { label: "Profile", icon: "heroicons:user" },
-    { label: "Dashboard", icon: "heroicons:home" },
-    { label: "Activity", icon: "heroicons:bolt" },
-    { label: "Analytics", icon: "heroicons:chart-bar" },
-    { label: "System", icon: "heroicons:cog" },
-    { label: "Deployments", icon: "heroicons:cloud-upload" },
-    { label: "My Settings", icon: "heroicons:adjustments-horizontal" },
-    { label: "Team Settings", icon: "heroicons:users" },
-    { label: "Help & Feedback", icon: "heroicons:question-mark-circle" },
-    { label: "Log Out", icon: "heroicons:arrow-right-on-rectangle" },
+    {
+      id: "",
+      label: "Dashboard",
+      icon: "heroicons:home",
+      path: "/",
+    },
+    {
+      id: "providers",
+      label: "Proveedores",
+      icon: "heroicons:building-office",
+      path: "/providers",
+    },
+    {
+      id: "settings",
+      label: "Configuración",
+      icon: "heroicons:cog-6-tooth",
+      path: "/settings",
+    },
   ];
+
+  const handleLogin = () => setIsLoggedIn(true);
+  const handleLogout = () => setIsLoggedIn(false);
+  const handleMenuClick = (path: string) => navigate(path);
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
   return (
-    <div className="flex h-screen">
-      {/* Sidebar para tablet/PC */}
+    <div className="flex h-screen bg-gray-50">
       <div
-        className={`hidden sm:flex flex-col bg-white border-r border-gray-100 shadow-lg transition-all duration-300 ${sidebarOpen ? "w-64" : "w-20"}`}
+        className={`bg-white shadow-lg transition-all duration-300 ${
+          isSidebarCollapsed ? "w-16" : "w-64"
+        }`}
       >
-        <div className="flex items-center justify-between px-4 py-4 border-b border-gray-100">
-          <div className="flex items-center gap-2">
-            {sidebarOpen && (
-              <Icon icon="heroicons:squares-2x2" width="32" height="32" />
-            )}
-          </div>
+        <div className="p-4 border-b border-gray-200 flex justify-center items-center">
+          {!isSidebarCollapsed ? (
+            <h2 className="text-xl font-bold text-green-700">RCE</h2>
+          ) : (
+            <Icon
+              icon="heroicons:squares-2x2"
+              className="w-7 h-7 text-green-600"
+            />
+          )}
+        </div>
+        <div className="p-2 border-b border-gray-200">
           <Button
             isIconOnly
             variant="light"
-            onPress={() => setSidebarOpen((v) => !v)}
-            aria-label={sidebarOpen ? "Cerrar menú" : "Abrir menú"}
+            onPress={toggleSidebar}
+            className="w-full"
           >
             <Icon
               icon={
-                sidebarOpen ? "heroicons:arrow-left" : "heroicons:arrow-right"
+                isSidebarCollapsed
+                  ? "heroicons:chevron-right"
+                  : "heroicons:chevron-left"
               }
-              width="20"
-              height="20"
+              className="w-5 h-5 text-green-600"
             />
           </Button>
         </div>
-        <nav className="flex-2 flex flex-col gap-2 mt-6">
-          {menuItems.map((item) => (
-            <Link
-              key={item.label}
-              href="#"
-              className={`flex items-center gap-3 px-4 py-2 rounded-lg text-green-700 font-semibold hover:bg-green-50 hover:text-green-900 transition-colors ${sidebarOpen ? "" : "justify-center"}`}
-            >
-              <span className="inline-block">
-                <Icon icon={`${item.icon}`} width="20" height="20" />
-              </span>
-              {sidebarOpen && <span>{item.label}</span>}
-            </Link>
-          ))}
+        <nav className="mt-4">
+          {menuItems.map((item) => {
+            const isActive = activeMenuItem === item.id;
+            const MenuButton = (
+              <Button
+                key={item.id}
+                variant="light"
+                className={`w-full justify-start mb-1 rounded-md ${
+                  isSidebarCollapsed ? "px-0" : "px-4"
+                } ${
+                  isActive
+                    ? "bg-green-100 text-green-700"
+                    : "hover:bg-green-50 text-gray-700"
+                }`}
+                onPress={() => handleMenuClick(item.path)}
+              >
+                <Icon icon={item.icon} className="w-5 h-5" />
+                {!isSidebarCollapsed && (
+                  <span className="ml-3">{item.label}</span>
+                )}
+              </Button>
+            );
+
+            return isSidebarCollapsed ? (
+              <Tooltip key={item.id} content={item.label} placement="right">
+                {MenuButton}
+              </Tooltip>
+            ) : (
+              MenuButton
+            );
+          })}
         </nav>
       </div>
-      {/* Navbar superior y menú móvil */}
       <div className="flex-1 flex flex-col">
-        <Navbar
-          onMenuOpenChange={setIsMenuOpen}
-          className="border-b border-gray-100 shadow"
-        >
-          <NavbarContent>
-            <NavbarMenuToggle
-              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-              className="sm:hidden"
-            />
-            <NavbarBrand>
-              <span className="font-bold text-green-700 text-xl ml-2">RCE</span>
-            </NavbarBrand>
-          </NavbarContent>
-          <NavbarContent justify="end">
-            <NavbarItem className="flex">
-              <Button as={Link} color="primary" href="#" variant="flat">
-                Login
-              </Button>
-            </NavbarItem>
-          </NavbarContent>
-          <NavbarMenu>
-            {menuItems.map((item, index) => (
-              <NavbarMenuItem key={`${item.label}-${index}`}>
-                <Link
-                  className="w-full flex items-center gap-3"
-                  color={
-                    index === 2
-                      ? "primary"
-                      : index === menuItems.length - 1
-                        ? "danger"
-                        : "foreground"
+        <header className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Icon
+                icon="heroicons:squares-2x2"
+                className="w-8 h-8 text-green-600 mr-3"
+              />
+            </div>
+            <div className="flex items-center space-x-4">
+              {!isLoggedIn ? (
+                <Button
+                  color="success"
+                  variant="solid"
+                  onPress={handleLogin}
+                  startContent={
+                    <Icon
+                      icon="heroicons:arrow-right-on-rectangle"
+                      className="w-4 h-4"
+                    />
                   }
-                  href="#"
-                  size="lg"
                 >
-                  <span className="inline-block">
-                    <i className={`iconify ${item.icon} text-xl`} />
-                  </span>
-                  <span>{item.label}</span>
-                </Link>
-              </NavbarMenuItem>
-            ))}
-          </NavbarMenu>
-        </Navbar>
-        <div className="mx-auto max-w-7xl">
-          <Outlet />
-        </div>
-        <footer className="w-full flex items-center justify-center py-3">
-          <Link
-            isExternal
-            className="flex items-center gap-1 text-current"
-            href="https://heroui.com"
-            title="heroui.com homepage"
-          >
-            <span>Powered by</span>
-            <p className="font-bold">HeroUI</p>
-          </Link>
-        </footer>
+                  Iniciar Sesión
+                </Button>
+              ) : (
+                <Dropdown placement="bottom-end">
+                  <DropdownTrigger>
+                    <div className="flex items-center cursor-pointer hover:bg-gray-50 rounded-lg p-2 transition-colors">
+                      <Avatar
+                        src={user.avatar}
+                        name={user.name}
+                        size="sm"
+                        className="mr-2"
+                      />
+                      <div className="text-left hidden sm:block">
+                        <p className="text-sm font-medium text-gray-900">
+                          {user.name}
+                        </p>
+                        <p className="text-xs text-gray-500">{user.email}</p>
+                      </div>
+                      <Icon
+                        icon="heroicons:chevron-down"
+                        className="w-4 h-4 ml-2 text-gray-400"
+                      />
+                    </div>
+                  </DropdownTrigger>
+                  <DropdownMenu aria-label="User Actions">
+                    <DropdownItem
+                      key="profile"
+                      startContent={
+                        <Icon icon="heroicons:user" className="w-4 h-4" />
+                      }
+                    >
+                      Mi Perfil
+                    </DropdownItem>
+                    <DropdownItem
+                      key="settings"
+                      startContent={
+                        <Icon
+                          icon="heroicons:cog-6-tooth"
+                          className="w-4 h-4"
+                        />
+                      }
+                    >
+                      Configuración
+                    </DropdownItem>
+                    <DropdownItem
+                      key="help"
+                      startContent={
+                        <Icon
+                          icon="heroicons:question-mark-circle"
+                          className="w-4 h-4"
+                        />
+                      }
+                    >
+                      Ayuda
+                    </DropdownItem>
+                    <DropdownItem
+                      key="logout"
+                      color="danger"
+                      startContent={
+                        <Icon
+                          icon="heroicons:arrow-left-on-rectangle"
+                          className="w-4 h-4"
+                        />
+                      }
+                      onClick={handleLogout}
+                    >
+                      Cerrar Sesión
+                    </DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+              )}
+            </div>
+          </div>
+        </header>
+        <main className="flex-1 p-6 overflow-y-auto bg-gray-50">
+          <div className="max-w-7xl mx-auto">{children}</div>
+        </main>
       </div>
     </div>
   );
-}
+};
+
+export default Layout;
