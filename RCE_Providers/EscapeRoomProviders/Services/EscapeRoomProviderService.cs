@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using RCE_Providers.EscapeRoomProviders.DTOs;
 using RCE_Providers.EscapeRoomProviders.Entities;
 using RCE_Providers.EscapeRoomProviders.Repositories;
-using RCE_Providers.Rooms.DTOs;
+using RCE_Providers.Common;
 
 namespace RCE_Providers.EscapeRoomProviders.Services;
 
@@ -21,15 +21,25 @@ public class EscapeRoomProviderService : IEscapeRoomProviderService
     public async Task<EscapeRoomProviderResponseDTO> CreateProviderAsync(EscapeRoomProviderRequestDTO dto)
     {
         var provider = _mapper.Map<EscapeRoomProvider>(dto);
+        var baseSlug = Slug.Generate(dto.Name);
+        if (string.IsNullOrWhiteSpace(baseSlug)) baseSlug = "provider";
+        var candidate = baseSlug;
+        var suffix = 2;
+        while (await _repository.GetBySlugAsync(candidate) != null)
+        {
+            candidate = $"{baseSlug}-{suffix}";
+            suffix++;
+        }
+        provider.Slug = candidate;
         await _repository.AddAsync(provider);
         await _repository.SaveChangesAsync();
 
         return _mapper.Map<EscapeRoomProviderResponseDTO>(provider);
     }
 
-    public async Task<bool> DeleteProviderAsync(Guid providerId)
+    public async Task<bool> DeleteProviderBySlugAsync(string providerSlug)
     {
-        var provider = await _repository.GetByIdAsync(providerId);
+        var provider = await _repository.GetBySlugAsync(providerSlug);
         if (provider == null) return false;
         try
         {
@@ -44,9 +54,9 @@ public class EscapeRoomProviderService : IEscapeRoomProviderService
         }
     }
 
-    public async Task<bool> UpdateProviderAsync(Guid providerId, EscapeRoomProviderRequestDTO dto)
+    public async Task<bool> UpdateProviderBySlugAsync(string providerSlug, EscapeRoomProviderRequestDTO dto)
     {
-        var provider = await _repository.GetByIdAsync(providerId);
+        var provider = await _repository.GetBySlugAsync(providerSlug);
         if (provider == null) return false;
         try
         {
@@ -68,17 +78,9 @@ public class EscapeRoomProviderService : IEscapeRoomProviderService
         return _mapper.Map<IEnumerable<EscapeRoomProviderResponseDTO>>(providers);
     }
 
-    public async Task<EscapeRoomProviderResponseDTO?> GetProviderByIdAsync(Guid providerId)
+    public async Task<EscapeRoomProviderResponseDTO?> GetProviderBySlugAsync(string slug)
     {
-        var provider = await _repository.GetByIdAsync(providerId);
-
+        var provider = await _repository.GetBySlugAsync(slug);
         return _mapper.Map<EscapeRoomProviderResponseDTO>(provider);
-    }
-
-    public async Task<IEnumerable<RoomResponseDTO>> GetRoomsByProviderIdAsync(Guid providerId)
-    {
-        var rooms = await _repository.GetRoomsByProviderIdAsync(providerId);
-
-        return _mapper.Map<IEnumerable<RoomResponseDTO>>(rooms);
     }
 }

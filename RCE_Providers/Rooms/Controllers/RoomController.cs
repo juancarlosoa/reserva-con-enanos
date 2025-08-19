@@ -4,7 +4,7 @@ using RCE_Providers.Rooms.Services;
 
 namespace RCE_Providers.Rooms.Controllers
 {
-    [Route("providers/rooms")]
+    [Route("providers/{providerSlug}/rooms")]
     [ApiController]
     public class RoomController : ControllerBase
     {
@@ -14,41 +14,46 @@ namespace RCE_Providers.Rooms.Controllers
             _roomService = service;
         }
 
-        [HttpGet("{roomId}")]
-        public async Task<ActionResult<RoomResponseDTO>> GetRoomById(Guid roomId)
+        [HttpGet(Name = "GetRoomsByProviderSlug")]
+        public async Task<ActionResult<IEnumerable<RoomResponseDTO>>> GetRoomsByProviderSlug(string providerSlug)
         {
-            var room = await _roomService.GetRoomByIdAsync(roomId);
-            if (room == null) return NotFound();
+            var rooms = await _roomService.GetRoomsByProviderSlugAsync(providerSlug);
+            return Ok(rooms);
+        }
 
+        [HttpGet("{roomSlug}")]
+        public async Task<ActionResult<RoomResponseDTO>> GetRoomBySlugs(string providerSlug, string roomSlug)
+        {
+            var room = await _roomService.GetRoomBySlugsAsync(providerSlug, roomSlug);
+            if (room == null) return NotFound();
             return Ok(room);
         }
 
         [HttpPost]
-        public async Task<ActionResult<RoomResponseDTO>> CreateRoom([FromBody] RoomRequestDTO dto)
+        public async Task<ActionResult<RoomResponseDTO>> CreateRoomByProviderSlug(string providerSlug, [FromBody] RoomRequestDTO dto)
         {
-            var createdRoom = await _roomService.CreateRoomAsync(dto);
+            var createdRoom = await _roomService.CreateRoomByProviderSlugAsync(providerSlug, dto);
+            if (createdRoom == null) return NotFound();
             return CreatedAtAction(
-                nameof(GetRoomById),
-                new { roomId = createdRoom.Id },
+                nameof(GetRoomBySlugs),
+                new { providerSlug, roomSlug = createdRoom.Slug },
                 createdRoom
-                );
+            );
         }
 
-        [HttpPut("{providerId}")]
-        public async Task<ActionResult<RoomResponseDTO>> UpdateProvider(Guid providerId, [FromBody] RoomRequestDTO dto)
+        [HttpPut("{roomSlug}")]
+        public async Task<IActionResult> UpdateRoomBySlugs(string providerSlug, string roomSlug, [FromBody] RoomRequestDTO dto)
         {
-            var result = await _roomService.UpdateRoomAsync(providerId, dto);
-            if (!result) return NotFound();
-
+            var ok = await _roomService.UpdateRoomBySlugsAsync(providerSlug, roomSlug, dto);
+            if (!ok) return NotFound();
             return Ok();
         }
 
-        [HttpDelete("{providerId}")]
-        public async Task<IActionResult> DeleteProvider(Guid providerId)
+        [HttpDelete("{roomSlug}")]
+        public async Task<IActionResult> DeleteRoomBySlugs(string providerSlug, string roomSlug)
         {
-            var success = await _roomService.DeleteRoomAsync(providerId);
-            if (!success) return NotFound();
-
+            var ok = await _roomService.DeleteRoomBySlugsAsync(providerSlug, roomSlug);
+            if (!ok) return NotFound();
             return Ok();
         }
     }

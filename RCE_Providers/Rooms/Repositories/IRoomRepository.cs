@@ -5,6 +5,7 @@ namespace RCE_Providers.Rooms.Repositories;
 public interface IRoomRepository
 {
     Task<Room?> GetByIdAsync(Guid id);
+    Task<Room?> GetByProviderAndSlugAsync(Guid providerId, string roomSlug);
     Task<Room> AddAsync(Room room);
     void Update(Room room);
     void Delete(Room room);

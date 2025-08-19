@@ -1,5 +1,6 @@
 using RCE_Providers.CoreData;
 using RCE_Providers.Rooms.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace RCE_Providers.Rooms.Repositories;
 
@@ -27,6 +28,10 @@ public class RoomRepository : IRoomRepository
     public async Task<Room?> GetByIdAsync(Guid id)
     {
         return await _context.Rooms.FindAsync(id);
+    }
+    public async Task<Room?> GetByProviderAndSlugAsync(Guid providerId, string roomSlug)
+    {
+        return await _context.Rooms.FirstOrDefaultAsync(r => r.ProviderId == providerId && r.Slug == roomSlug);
     }
     public void Update(Room room)
     {

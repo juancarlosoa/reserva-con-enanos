@@ -43,7 +43,14 @@ namespace RCE_Providers.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
 
                     b.ToTable("EscapeRoomProviders");
                 });
@@ -77,13 +84,18 @@ namespace RCE_Providers.Migrations
                     b.Property<Guid>("ProviderId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Theme")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProviderId");
+                    b.HasIndex("ProviderId", "Slug")
+                        .IsUnique();
 
                     b.ToTable("Rooms");
                 });

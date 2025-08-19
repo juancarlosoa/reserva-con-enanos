@@ -7,6 +7,7 @@ public interface IEscapeRoomProviderRepository
 {
     Task<IEnumerable<EscapeRoomProvider>> GetAllAsync();
     Task<EscapeRoomProvider?> GetByIdAsync(Guid id);
+    Task<EscapeRoomProvider?> GetBySlugAsync(string slug);
     Task<EscapeRoomProvider> AddAsync(EscapeRoomProvider provider);
     void Update(EscapeRoomProvider provider);
     void Delete(EscapeRoomProvider provider);

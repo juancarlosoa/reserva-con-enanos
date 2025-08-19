@@ -90,6 +90,20 @@ services:
     networks:
       - rce_network
 
+  vuefrontend:
+    container_name: vuefrontend
+    build:
+      context: ./RCE_Vue
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5174:5174"
+    volumes:
+      - ./RCE_Vue:/app
+      - /app/node_modules
+    environment:
+      - HOST=0.0.0.0
+    networks:
+      - rce_network
 networks:
   rce_network:
 

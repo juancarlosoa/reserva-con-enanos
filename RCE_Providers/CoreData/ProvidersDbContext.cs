@@ -19,6 +19,14 @@ public class ProvidersDbContext : DbContext
         modelBuilder.Entity<EscapeRoomProvider>().HasKey(p => p.Id);
         modelBuilder.Entity<Room>().HasKey(r => r.Id);
 
+        modelBuilder.Entity<EscapeRoomProvider>()
+            .HasIndex(p => p.Slug)
+            .IsUnique();
+
+        modelBuilder.Entity<Room>()
+            .HasIndex(r => new { r.ProviderId, r.Slug })
+            .IsUnique();
+
         modelBuilder
             .Entity<EscapeRoomProvider>()
             .HasMany(p => p.Rooms)

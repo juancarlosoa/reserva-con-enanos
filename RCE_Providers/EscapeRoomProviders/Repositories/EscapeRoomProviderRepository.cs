@@ -44,6 +44,13 @@ public class EscapeRoomProviderRepository : IEscapeRoomProviderRepository
              .FirstOrDefaultAsync(p => p.Id == id);
     }
 
+    public async Task<EscapeRoomProvider?> GetBySlugAsync(string slug)
+    {
+        return await _context.EscapeRoomProviders
+             .Include(p => p.Rooms.OrderBy(r => r.CreatedAt).Take(5))
+             .FirstOrDefaultAsync(p => p.Slug == slug);
+    }
+
     public void Update(EscapeRoomProvider provider)
     {
         if (provider == null)

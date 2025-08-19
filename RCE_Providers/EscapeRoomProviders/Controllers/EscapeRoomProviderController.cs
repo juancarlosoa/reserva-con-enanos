@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using RCE_Providers.EscapeRoomProviders.DTOs;
 using RCE_Providers.EscapeRoomProviders.Services;
-using RCE_Providers.Rooms.DTOs;
 
 namespace RCE_Providers.EscapeRoomProviders.Controllers
 {
@@ -23,12 +22,11 @@ namespace RCE_Providers.EscapeRoomProviders.Controllers
             return Ok(providers);
         }
 
-        [HttpGet("{providerId}")]
-        public async Task<ActionResult<EscapeRoomProviderResponseDTO>> GetProviderById(Guid providerId)
+        [HttpGet("{providerSlug}")]
+        public async Task<ActionResult<EscapeRoomProviderResponseDTO>> GetProviderBySlug(string providerSlug)
         {
-            var provider = await _providerService.GetProviderByIdAsync(providerId);
+            var provider = await _providerService.GetProviderBySlugAsync(providerSlug);
             if (provider == null) return NotFound();
-
             return Ok(provider);
         }
 
@@ -37,36 +35,28 @@ namespace RCE_Providers.EscapeRoomProviders.Controllers
         {
             var created = await _providerService.CreateProviderAsync(dto);
             return CreatedAtAction(
-                nameof(GetProviderById),
-                new { providerId = created.Id },
+                nameof(GetProviderBySlug),
+                new { providerSlug = created.Slug },
                 created
             );
         }
 
-        [HttpPut("{providerId}")]
-        public async Task<ActionResult<EscapeRoomProviderResponseDTO>> UpdateProvider(Guid providerId, [FromBody] EscapeRoomProviderRequestDTO dto)
+        [HttpPut("{providerSlug}")]
+        public async Task<ActionResult<EscapeRoomProviderResponseDTO>> UpdateProvider(string providerSlug, [FromBody] EscapeRoomProviderRequestDTO dto)
         {
-            var result = await _providerService.UpdateProviderAsync(providerId, dto);
+            var result = await _providerService.UpdateProviderBySlugAsync(providerSlug, dto);
             if (!result) return NotFound();
 
             return Ok();
         }
 
-        [HttpDelete("{providerId}")]
-        public async Task<IActionResult> DeleteProvider(Guid providerId)
+        [HttpDelete("{providerSlug}")]
+        public async Task<IActionResult> DeleteProvider(string providerSlug)
         {
-            var success = await _providerService.DeleteProviderAsync(providerId);
+            var success = await _providerService.DeleteProviderBySlugAsync(providerSlug);
             if (!success) return NotFound();
 
             return Ok();
-        }
-
-        [HttpGet("{providerId}/rooms")]
-        public async Task<ActionResult<IEnumerable<RoomResponseDTO>>> GetRoomsByProvider(Guid providerId)
-        {
-            var rooms = await _providerService.GetRoomsByProviderIdAsync(providerId);
-
-            return Ok(rooms);
         }
     }
 }
