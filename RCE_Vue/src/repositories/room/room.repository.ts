@@ -5,24 +5,24 @@ import type { RoomRequestDTO, RoomResponseDTO } from './room.dto'
 import { mapRoomModelToRequest, mapRoomResponseToModel } from './room.mapper'
 
 export const roomRepository = {
-    async getRoomById(roomId: string): Promise<Room> {
-        const dto = await apiAdapter.get<RoomResponseDTO>(`${REPOSITORY_HOSTS.ROOMS}/${roomId}`)
+    async getRoomBySlug(providerSlug: string, roomSlug: string): Promise<Room> {
+        const dto = await apiAdapter.get<RoomResponseDTO>(`${REPOSITORY_HOSTS.PROVIDERS}/${providerSlug}${REPOSITORY_HOSTS.ROOMS}/${roomSlug}`)
         return mapRoomResponseToModel(dto)
     },
 
-    async createRoom(model: Room): Promise<Room> {
+    async createRoom(providerSlug: string, model: Room): Promise<Room> {
         const payload: RoomRequestDTO = mapRoomModelToRequest(model)
-        const dto = await apiAdapter.post<RoomResponseDTO, RoomRequestDTO>(`${REPOSITORY_HOSTS.ROOMS}`, payload)
+        const dto = await apiAdapter.post<RoomResponseDTO, RoomRequestDTO>(`${REPOSITORY_HOSTS.PROVIDERS}/${providerSlug}${REPOSITORY_HOSTS.ROOMS}`, payload)
         return mapRoomResponseToModel(dto)
     },
 
-    async deleteRoom(roomId: string): Promise<void> {
-        await apiAdapter.delete(`${REPOSITORY_HOSTS.PROVIDERS}/${REPOSITORY_HOSTS.ROOMS}/${roomId}`)
+    async deleteRoom(providerSlug: string, roomSlug: string): Promise<void> {
+        await apiAdapter.delete(`${REPOSITORY_HOSTS.PROVIDERS}/${providerSlug}${REPOSITORY_HOSTS.ROOMS}/${roomSlug}`)
     },
 
-    async updateRoom(roomId: string, model: Room): Promise<Room> {
+    async updateRoom(providerSlug: string, roomSlug: string, model: Room): Promise<Room> {
         const payload: RoomRequestDTO = mapRoomModelToRequest(model)
-        const dto = await apiAdapter.put<RoomResponseDTO, RoomRequestDTO>(`${REPOSITORY_HOSTS.ROOMS}/${roomId}`, payload)
+        const dto = await apiAdapter.put<RoomResponseDTO, RoomRequestDTO>(`${REPOSITORY_HOSTS.PROVIDERS}/${providerSlug}${REPOSITORY_HOSTS.ROOMS}/${roomSlug}`, payload)
         return mapRoomResponseToModel(dto)
     }
 }

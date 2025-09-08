@@ -398,3 +398,35 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Environment files and secrets
+.env
+.env.local
+.env.*
+!.env.example
+*.pfx
+*.key
+*.crt
+*.pem
+servers.json
+appsettings.*.json
+!appsettings.json
+!appsettings.Example.json
+
+# Database dumps and backups
+*.sql
+!init.sql
+*.dump
+*.backup
+
+# Configuration files with secrets
+servers.json
+appsettings.*.json
+!appsettings.json
+!appsettings.Example.json
+
+# Certificates
+*.pfx
+*.key
+*.crt
+*.pem

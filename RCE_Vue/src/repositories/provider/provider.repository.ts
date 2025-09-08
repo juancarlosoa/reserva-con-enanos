@@ -32,8 +32,8 @@ export const providerRepository = {
         return mapProviderResponseToModel(dto)
     },
 
-    async getProviderRooms(providerId: string): Promise<Room[]> {
-        return await apiAdapter.get<Room[]>(`${REPOSITORY_HOSTS.PROVIDERS}/${providerId}/rooms`)
+    async getProviderRooms(providerSlug: string): Promise<Room[]> {
+        return await apiAdapter.get<Room[]>(`${REPOSITORY_HOSTS.PROVIDERS}/${providerSlug}/rooms`)
     }
 }
 

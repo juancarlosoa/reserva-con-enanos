@@ -6,7 +6,7 @@ BEGIN
    ) THEN
       CREATE ROLE rce_user WITH LOGIN;
       ALTER ROLE rce_user SET password_encryption = 'scram-sha-256';
-      ALTER ROLE rce_user WITH PASSWORD 'RCEPassword';
+      ALTER ROLE rce_user WITH PASSWORD '${DB_PASSWORD}';
    END IF;
 END
 $$;

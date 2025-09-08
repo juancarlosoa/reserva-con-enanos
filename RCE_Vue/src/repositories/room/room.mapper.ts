@@ -4,6 +4,7 @@ import type { RoomRequestDTO, RoomResponseDTO } from './room.dto'
 export function mapRoomResponseToModel(dto: RoomResponseDTO): Room {
     return {
         id: dto.id,
+        slug: dto.slug,
         name: dto.name,
         capacity: dto.capacity,
         type: dto.type,

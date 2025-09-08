@@ -6,6 +6,10 @@ using RCE_Providers.EscapeRoomProviders.Services;
 using RCE_Providers.Rooms.Mappings;
 using RCE_Providers.Rooms.Repositories;
 using RCE_Providers.Rooms.Services;
+using DotNetEnv;
+
+// Cargar variables de entorno
+DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 

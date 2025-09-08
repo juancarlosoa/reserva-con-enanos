@@ -4,6 +4,7 @@ import type { ProviderRequestDTO, ProviderResponseDTO } from './provider.dto'
 export function mapProviderResponseToModel(dto: ProviderResponseDTO): Provider {
     return {
         id: dto.id,
+        slug: dto.slug,
         name: dto.name,
         email: dto.email,
         phone: dto.phone,

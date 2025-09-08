@@ -213,6 +213,7 @@ async function handleCreateProvider(payload: { name: string; email: string; phon
   try {
     const providerToCreate: Provider = {
       id: "0",
+      slug: "",
       name: payload.name,
       email: payload.email,
       phone: payload.phone,
@@ -233,6 +234,7 @@ async function handleCreateRoom(payload: { name: string; capacity: number; type:
   if (!selectedProvider.value) return
       const room: Room = {
         id: "0",
+        slug: "",
     name: payload.name,
     capacity: payload.capacity,
     type: payload.type,
@@ -244,7 +246,7 @@ async function handleCreateRoom(payload: { name: string; capacity: number; type:
       if (provider) {
         provider.roomCount++
       }
-      const created = await roomRepository.createRoom(room)
+      const created = await roomRepository.createRoom(selectedProvider.value.slug, room)
       rooms.value.push(created)
       message.success('Sala creada exitosamente')
     }
