@@ -4,7 +4,7 @@ namespace RCE_Providers.Rooms.Entities;
 
 public class Room
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; init; } = Guid.NewGuid();
     public Guid ProviderId { get; set; }
     public string Slug { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
@@ -14,6 +14,9 @@ public class Room
     public required int MaxPlayers { get; set; }
     public int DurationMinutes { get; set; } = 0;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
+    public bool IsDeleted { get; set; } = false;
+    public DateTime? DeletedAt { get; set; }
 
     public EscapeRoomProvider? Provider { get; set; }
 }

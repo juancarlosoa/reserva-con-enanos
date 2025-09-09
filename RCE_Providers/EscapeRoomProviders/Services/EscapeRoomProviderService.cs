@@ -43,7 +43,10 @@ public class EscapeRoomProviderService : IEscapeRoomProviderService
         if (provider == null) return false;
         try
         {
-            _repository.Delete(provider);
+            // Soft delete
+            provider.IsDeleted = true;
+            provider.DeletedAt = DateTime.UtcNow;
+            _repository.Update(provider);
             await _repository.SaveChangesAsync();
 
             return true;

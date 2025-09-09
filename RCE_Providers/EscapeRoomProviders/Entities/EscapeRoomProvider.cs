@@ -4,12 +4,15 @@ namespace RCE_Providers.EscapeRoomProviders.Entities;
 
 public class EscapeRoomProvider
 {
-    public Guid Id { get; }
+    public Guid Id { get; init; } = Guid.NewGuid();
     public string Slug { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
+    public bool IsDeleted { get; set; } = false;
+    public DateTime? DeletedAt { get; set; }
 
     public ICollection<Room> Rooms { get; set; } = [];
 }

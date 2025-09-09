@@ -23,8 +23,7 @@ services:
       dockerfile: Dockerfile
       args:
         PROJECT: RCE_Auth
-    ports:
-      - "5102:8080"
+    # ports: # ✅ Removido - solo accesible internamente
     volumes:
       - ./certs:/https:ro
     environment:
@@ -83,12 +82,25 @@ services:
       dockerfile: Dockerfile
       args:
         PROJECT: RCE_Providers
-    ports:
-      - "5103:8080"
+    # ports: # ✅ Removido - solo accesible internamente
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     networks:
       - rce_network
+
+  reservations:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PROJECT: ReservaConEnanos.Reservations
+    # ports: # ✅ No expuesto - solo accesible internamente
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - rce_network
+    depends_on:
+      - postgres
 
   vuefrontend:
     container_name: vuefrontend

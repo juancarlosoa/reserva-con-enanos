@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
-using OpenIddict.EntityFrameworkCore.Models;
 using RCE_Auth.UsersRoles.Entities;
 
 namespace RCE_Auth.CoreData;
@@ -40,8 +39,17 @@ public class AuthDbContext : IdentityDbContext<User, Role, Guid>
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<User>();
+        // ✅ Configurar entidades de OpenIddict
+        modelBuilder.UseOpenIddict();
 
-        modelBuilder.Entity<Role>();
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.ToTable("AspNetUsers");
+        });
+
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.ToTable("AspNetRoles");
+        });
     }
 }

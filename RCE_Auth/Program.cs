@@ -7,6 +7,7 @@ using RCE_Auth.CoreData;
 using RCE_Auth.UsersRoles.Entities;
 using Scalar.AspNetCore;
 using DotNetEnv;
+using static OpenIddict.Abstractions.OpenIddictConstants;
 
 // Cargar variables de entorno desde el archivo .env
 Env.Load();
@@ -31,26 +32,39 @@ builder.Services.AddOpenIddict()
     })
     .AddServer(options =>
     {
-        options.SetAuthorizationEndpointUris("/auth/connect/authorize");
-        options.SetTokenEndpointUris("/auth/connect/token");
-        options.SetIssuer(new Uri("https://localhost:5101/auth"));
+        // ✅ Configurar endpoints correctamente
+        options.SetAuthorizationEndpointUris("/auth/connect/authorize")
+               .SetTokenEndpointUris("/auth/connect/token");
 
+        // ✅ Configurar issuer correcto (debe coincidir con el gateway)
+        options.SetIssuer(new Uri("https://gateway:8080/auth"));
+
+        // ✅ Configurar flujos permitidos
         options.AllowAuthorizationCodeFlow()
+               .AllowRefreshTokenFlow()
                .RequireProofKeyForCodeExchange();
 
-        options.AllowRefreshTokenFlow();
+        // ✅ Registrar scopes
+        options.RegisterScopes(
+            OpenIddict.Abstractions.OpenIddictConstants.Scopes.OpenId,
+            OpenIddict.Abstractions.OpenIddictConstants.Scopes.Email,
+            OpenIddict.Abstractions.OpenIddictConstants.Scopes.Profile,
+            OpenIddict.Abstractions.OpenIddictConstants.Scopes.Roles,
+            "api"
+        );
 
-        options.RegisterScopes("openid", "profile", "email", "api");
+        // ✅ Solo para desarrollo - usar certificados de desarrollo
+        if (builder.Environment.IsDevelopment())
+        {
+            options.AddDevelopmentEncryptionCertificate()
+                   .AddDevelopmentSigningCertificate();
+        }
 
-        options.AcceptAnonymousClients();
-
-        options.AddDevelopmentEncryptionCertificate()
-               .AddDevelopmentSigningCertificate();
-
+        // ✅ Configurar ASP.NET Core integration
         options.UseAspNetCore()
                .EnableAuthorizationEndpointPassthrough()
                .EnableTokenEndpointPassthrough()
-               .EnableUserInfoEndpointPassthrough();
+               .DisableTransportSecurityRequirement(); // Solo para desarrollo
     });
 
 builder.Services.AddAuthentication(options =>
@@ -91,12 +105,13 @@ static string MapPermission(string permission)
 {
     return permission switch
     {
-        "Endpoints:Authorization" => OpenIddictConstants.Permissions.Endpoints.Authorization,
-        "Endpoints:Token" => OpenIddictConstants.Permissions.Endpoints.Token,
-        "GrantTypes:AuthorizationCode" => OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
-        "GrantTypes:RefreshToken" => OpenIddictConstants.Permissions.GrantTypes.RefreshToken,
-        "ResponseTypes:Code" => OpenIddictConstants.Permissions.ResponseTypes.Code,
-        "Features:ProofKeyForCodeExchange" => OpenIddictConstants.Requirements.Features.ProofKeyForCodeExchange,
+        "Endpoints:Authorization" => Permissions.Endpoints.Authorization,
+        "Endpoints:Token" => Permissions.Endpoints.Token,
+
+        "GrantTypes:AuthorizationCode" => Permissions.GrantTypes.AuthorizationCode,
+        "GrantTypes:RefreshToken" => Permissions.GrantTypes.RefreshToken,
+        "ResponseTypes:Code" => Permissions.ResponseTypes.Code,
+        "Features:ProofKeyForCodeExchange" => Requirements.Features.ProofKeyForCodeExchange,
         _ => permission
     };
 }
@@ -119,21 +134,29 @@ using (var scope = app.Services.CreateScope())
             var descriptor = new OpenIddictApplicationDescriptor
             {
                 ClientId = clientId,
-                ClientSecret = client["ClientSecret"],
                 DisplayName = client["DisplayName"]
             };
 
+            // ✅ Agregar redirect URIs
             var redirectUri = client["RedirectUri"];
             if (!string.IsNullOrEmpty(redirectUri))
                 descriptor.RedirectUris.Add(new Uri(redirectUri));
+
+            var postLogoutRedirectUri = client["PostLogoutRedirectUri"];
+            if (!string.IsNullOrEmpty(postLogoutRedirectUri))
+                descriptor.PostLogoutRedirectUris.Add(new Uri(postLogoutRedirectUri));
+
+            // ✅ Agregar scopes
             var scopes = client.GetSection("Scopes").Get<string[]>();
             if (scopes != null)
             {
                 foreach (var sc in scopes)
                 {
-                    descriptor.Permissions.Add(OpenIddictConstants.Permissions.Prefixes.Scope + sc);
+                    descriptor.Permissions.Add(Permissions.Prefixes.Scope + sc);
                 }
             }
+
+            // ✅ Agregar permisos
             var permissions = client.GetSection("Permissions").Get<string[]>();
             if (permissions != null)
             {

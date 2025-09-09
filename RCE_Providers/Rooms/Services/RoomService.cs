@@ -66,7 +66,10 @@ public class RoomService : IRoomService
         if (room == null) return false;
         try
         {
-            _repository.Delete(room);
+            // Soft delete
+            room.IsDeleted = true;
+            room.DeletedAt = DateTime.UtcNow;
+            _repository.Update(room);
             await _repository.SaveChangesAsync();
             return true;
         }
